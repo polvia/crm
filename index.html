@@ -21,19 +21,39 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden;max-width:100%}
 body::before{content:"";position:fixed;inset:0;background:radial-gradient(800px 400px at 0% 0%,rgba(255,107,53,0.07),transparent 60%),radial-gradient(700px 500px at 100% 0%,rgba(96,165,250,0.05),transparent 60%);pointer-events:none;z-index:0}
-.app{position:relative;z-index:1;max-width:1600px;margin:0 auto;padding:1.5rem 2rem 4rem}
+.app{position:relative;z-index:1;max-width:1600px;margin:0 auto;padding:1.25rem 2rem 4rem}
 
-/* Header */
-.header{display:flex;align-items:center;justify-content:space-between;padding-bottom:1.25rem;border-bottom:1px solid var(--border);margin-bottom:1.5rem;gap:1rem}
-.brand{display:flex;align-items:center;gap:.85rem}
-.logo{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--accent) 0%,#ff8c42 50%,var(--a2) 100%);display:grid;place-items:center;font-weight:800;color:#0a0b10;font-size:1.2rem;box-shadow:0 6px 20px var(--aglow);flex-shrink:0}
-.brand-text h1{font-size:1.1rem;font-weight:700;letter-spacing:-.02em}
-.brand-text .sub{font-size:.7rem;color:var(--t3);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.08em;margin-top:2px}
-.header-right{display:flex;align-items:center;gap:1.25rem}
-.stats{display:flex;gap:1.25rem}
-.stat{text-align:right}
-.stat-value{font-size:1.4rem;font-weight:700}
-.stat-label{font-size:.65rem;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;font-family:'JetBrains Mono',monospace}
+/* Topbar */
+.topbar{position:sticky;top:0;z-index:50;background:#0a0c14;border-bottom:1px solid var(--border);backdrop-filter:blur(8px)}
+.topbar-inner{max-width:1600px;margin:0 auto;padding:.6rem 1.25rem;display:flex;align-items:center;gap:.85rem}
+.brand{display:flex;align-items:center;gap:.85rem;flex-shrink:0}
+.logo{width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,var(--accent) 0%,#ff8c42 50%,var(--a2) 100%);display:grid;place-items:center;font-weight:800;color:#0a0b10;font-size:1rem;box-shadow:0 4px 14px var(--aglow);flex-shrink:0}
+
+.topbar-search{flex:1;max-width:680px;margin:0 auto;display:flex;align-items:center;gap:.55rem;background:#161922;border:1px solid var(--border);border-radius:8px;padding:.5rem .85rem;transition:border-color .15s,background .15s}
+.topbar-search:focus-within{border-color:var(--accent);background:var(--s2)}
+.topbar-search svg{flex-shrink:0;color:var(--t3);width:16px;height:16px}
+.topbar-search input{flex:1;background:none;border:none;outline:none;color:var(--text);font-family:inherit;font-size:.88rem}
+.topbar-search input::placeholder{color:var(--t3)}
+.kbd-hint{display:flex;gap:.2rem}
+.kbd{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 .3rem;background:var(--s3);border:1px solid var(--border2);border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--t2)}
+
+.topbar-add{width:34px;height:34px;border-radius:50%;background:transparent;border:1px solid var(--border2);color:var(--t2);font-size:1.15rem;font-weight:300;cursor:pointer;display:grid;place-items:center;transition:all .15s;flex-shrink:0;line-height:1}
+.topbar-add:hover{background:var(--s2);color:var(--accent);border-color:var(--accent)}
+
+.topbar-right{display:flex;align-items:center;gap:.6rem;flex-shrink:0}
+.btn-icon{width:34px;height:34px;border-radius:8px;background:transparent;border:1px solid transparent;color:var(--t2);cursor:pointer;display:grid;place-items:center;font-size:1rem;transition:all .15s}
+.btn-icon:hover{background:var(--s2);color:var(--text);border-color:var(--border)}
+
+.stats{display:flex;gap:1rem;padding-right:.4rem;border-right:1px solid var(--border);margin-right:.2rem}
+.stat{text-align:right;display:flex;flex-direction:column;line-height:1.1}
+.stat-value{font-size:.95rem;font-weight:700}
+.stat-label{font-size:.6rem;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;font-family:'JetBrains Mono',monospace}
+
+@media(max-width:760px){
+  .topbar-search{max-width:none}
+  .stats{display:none}
+  .kbd-hint{display:none}
+}
 
 /* Sync badge */
 .sync-badge{display:inline-flex;align-items:center;gap:.4rem;padding:.35rem .7rem;border-radius:999px;font-size:.72rem;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.06em;border:1px solid var(--border);background:var(--s2);color:var(--t2);cursor:pointer;transition:all .15s}
@@ -263,25 +283,28 @@ tbody tr.selected{background:rgba(255,107,53,.07);border-left:2px solid var(--ac
 </style>
 </head>
 <body>
-<div class="app">
-
-<header class="header">
-  <div class="brand">
-    <div class="logo">M</div>
-    <div class="brand-text">
-      <h1>Miguel's better HubSpot</h1>
-      <div class="sub">Contact Relationship Manager</div>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="logo" title="Miguel's better HubSpot">M</div>
     </div>
-  </div>
-  <div class="header-right">
-    <div class="stats">
-      <div class="stat"><div class="stat-value" id="contact-count">0</div><div class="stat-label">Contacts</div></div>
-      <div class="stat"><div class="stat-value" id="email-count">0</div><div class="stat-label">Emails Sent</div></div>
+    <div class="topbar-search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="search" id="global-search" placeholder="Find or Ask">
+      <span class="kbd-hint"><span class="kbd">⌘</span><span class="kbd">K</span></span>
     </div>
-    <button class="btn btn-sm" id="refresh-btn">↻ Refresh</button>
-    <button class="sync-badge" id="sync-badge"><span class="dot"></span><span id="sync-label">Offline</span></button>
+    <button class="topbar-add" id="topbar-add-btn" title="Add new (Contact or Deal)">+</button>
+    <div class="topbar-right">
+      <div class="stats">
+        <div class="stat"><div class="stat-value" id="contact-count">0</div><div class="stat-label">Contacts</div></div>
+        <div class="stat"><div class="stat-value" id="email-count">0</div><div class="stat-label">Emails</div></div>
+      </div>
+      <button class="btn-icon" id="refresh-btn" title="Refresh">↻</button>
+      <button class="sync-badge" id="sync-badge"><span class="dot"></span><span id="sync-label">Offline</span></button>
+    </div>
   </div>
 </header>
+<div class="app">
 
 <div class="tabs" id="tabs">
   <button class="tab active" data-tab="contacts">Contacts <span class="tab-count" id="tab-contacts-count">0</span></button>
@@ -1303,6 +1326,35 @@ $("view-toggle").addEventListener("click", e => {
 });
 
 $("deals-export-btn").addEventListener("click", exportDealsCSV);
+
+// Global search — drives whichever tab is active
+$("global-search").addEventListener("input", e => {
+  const v = e.target.value;
+  if(activeTab === "deals") {
+    dealsSearch = v;
+    $("deals-search").value = v;
+    renderDeals();
+  } else {
+    searchTerm = v;
+    $("search").value = v;
+    render();
+  }
+});
+
+// Topbar + button — opens the right thing for the active tab
+$("topbar-add-btn").addEventListener("click", () => {
+  if(activeTab === "deals") openAddDealModal();
+  else openAddDrawer();
+});
+
+// ⌘K / Ctrl+K to focus global search
+document.addEventListener("keydown", e => {
+  if((e.metaKey || e.ctrlKey) && e.key === "k") {
+    e.preventDefault();
+    $("global-search").focus();
+    $("global-search").select();
+  }
+});
 
 $("d-contact").addEventListener("change", e => {
   const c = contacts.find(x => x.id === e.target.value);
