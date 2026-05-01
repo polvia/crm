@@ -46,8 +46,17 @@ body::before{content:"";position:fixed;inset:0;background:radial-gradient(800px 
 .sync-badge.syncing .dot{background:var(--blue);animation:pulse 1s ease-in-out infinite}
 
 /* Layout */
-.body-layout{display:grid;grid-template-columns:340px 1fr;gap:1.5rem;align-items:start}
-@media(max-width:1024px){.body-layout{grid-template-columns:1fr}}
+.body-layout{display:block}
+.panel-title-row{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1.1rem}
+.panel-title-row .panel-title{margin-bottom:0}
+.btn-inline{width:auto;padding:.55rem 1rem}
+
+/* Drawer */
+.drawer-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);z-index:200;opacity:0;pointer-events:none;transition:opacity .2s}
+.drawer-backdrop.active{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:380px;max-width:92vw;background:var(--surface);border-left:1px solid var(--border2);padding:1.5rem;overflow-y:auto;transform:translateX(100%);transition:transform .25s ease;box-shadow:-20px 0 60px rgba(0,0,0,.4);display:flex;flex-direction:column}
+.drawer-backdrop.active .drawer{transform:translateX(0)}
+.drawer .modal-header{margin-bottom:1.25rem}
 
 /* Panel */
 .panel{background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:1.25rem}
@@ -206,27 +215,11 @@ tbody tr.selected{background:rgba(255,107,53,.07);border-left:2px solid var(--ac
 
 <div class="body-layout">
 
-  <aside class="panel">
-    <div class="panel-title">Add Contact</div>
-    <form id="contact-form">
-      <div class="field"><label>Name</label><input type="text" id="f-name" required placeholder="Jane Doe"></div>
-      <div class="field"><label>Email</label><input type="email" id="f-email" required placeholder="jane@example.com"></div>
-      <div class="field"><label>Phone</label><input type="tel" id="f-phone" placeholder="(555) 123-4567"></div>
-      <div class="field"><label>Owner</label><input type="text" id="f-owner" placeholder="Miguel"></div>
-      <div class="field"><label>Status</label>
-        <select id="f-status">
-          <option value="New">New</option><option value="Contacted">Contacted</option>
-          <option value="Engaged">Engaged</option><option value="Customer">Customer</option>
-          <option value="Lost">Lost</option>
-        </select>
-      </div>
-      <div class="field"><label>Comment</label><textarea id="f-comment" placeholder="Notes..."></textarea></div>
-      <button type="submit" class="btn btn-primary">+ Add Contact</button>
-    </form>
-  </aside>
-
   <main class="panel">
-    <div class="panel-title">Contacts</div>
+    <div class="panel-title-row">
+      <div class="panel-title">Contacts</div>
+      <button class="btn btn-primary btn-inline" id="open-add-btn">+ Add Contact</button>
+    </div>
 
     <div class="filter-pills" id="filter-pills">
       <button class="pill active" data-filter="all">All</button>
@@ -279,6 +272,31 @@ tbody tr.selected{background:rgba(255,107,53,.07);border-left:2px solid var(--ac
   </div>
 </div>
 
+</div>
+
+<!-- Add Contact Drawer -->
+<div class="drawer-backdrop" id="add-drawer">
+  <aside class="drawer">
+    <div class="modal-header">
+      <div><h2>Add Contact</h2><div class="msub">New entry</div></div>
+      <button class="close-btn" id="close-add">&times;</button>
+    </div>
+    <form id="contact-form">
+      <div class="field"><label>Name</label><input type="text" id="f-name" required placeholder="Jane Doe"></div>
+      <div class="field"><label>Email</label><input type="email" id="f-email" required placeholder="jane@example.com"></div>
+      <div class="field"><label>Phone</label><input type="tel" id="f-phone" placeholder="(555) 123-4567"></div>
+      <div class="field"><label>Owner</label><input type="text" id="f-owner" placeholder="Miguel"></div>
+      <div class="field"><label>Status</label>
+        <select id="f-status">
+          <option value="New">New</option><option value="Contacted">Contacted</option>
+          <option value="Engaged">Engaged</option><option value="Customer">Customer</option>
+          <option value="Lost">Lost</option>
+        </select>
+      </div>
+      <div class="field"><label>Comment</label><textarea id="f-comment" placeholder="Notes..."></textarea></div>
+      <button type="submit" class="btn btn-primary">+ Add Contact</button>
+    </form>
+  </aside>
 </div>
 
 <!-- Settings Modal -->
@@ -693,10 +711,15 @@ function showToast(msg,type="") {
 }
 
 // Event listeners
+function openAddDrawer(){$("add-drawer").classList.add("active");setTimeout(()=>$("f-name").focus(),250);}
+function closeAddDrawer(){$("add-drawer").classList.remove("active");}
+$("open-add-btn").addEventListener("click",openAddDrawer);
+$("close-add").addEventListener("click",closeAddDrawer);
+$("add-drawer").addEventListener("click",e=>{if(e.target===$("add-drawer"))closeAddDrawer();});
 $("contact-form").addEventListener("submit",async e=>{
   e.preventDefault();
   await addContact({name:$("f-name").value,email:$("f-email").value,phone:$("f-phone").value,owner:$("f-owner").value,status:$("f-status").value,comment:$("f-comment").value});
-  e.target.reset(); $("f-status").value="New"; showToast("Contact added","success");
+  e.target.reset(); $("f-status").value="New"; closeAddDrawer(); showToast("Contact added","success");
 });
 $("contacts-body").addEventListener("click",e=>{
   const btn=e.target.closest("button[data-action]"); if(!btn) return;
@@ -765,7 +788,7 @@ document.addEventListener("click",e=>{
 });
 document.addEventListener("keydown",e=>{
   if(e.key!=="Escape") return;
-  closeSettings();closeEmailModal();closeBulkEmailModal();closeEditModal();
+  closeSettings();closeEmailModal();closeBulkEmailModal();closeEditModal();closeAddDrawer();
 });
 
 // Init
