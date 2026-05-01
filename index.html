@@ -128,6 +128,10 @@ tbody td{padding:.8rem .7rem;border-bottom:1px solid var(--border);font-size:.86
 tbody tr:hover{background:var(--s2)}
 tbody tr.selected{background:rgba(255,107,53,.07);border-left:2px solid var(--accent)}
 .nc{font-weight:600;white-space:nowrap;color:var(--text)}
+.name-cell{display:flex;align-items:center;gap:.65rem}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--s3);color:var(--t2);display:inline-grid;place-items:center;font-size:.72rem;font-weight:700;font-family:'JetBrains Mono',monospace;flex-shrink:0;border:1px solid var(--border);text-transform:uppercase;letter-spacing:.02em}
+.name-link{color:var(--blue);font-weight:600;cursor:pointer;text-decoration:none}
+.name-link:hover{text-decoration:underline}
 .ec,.pc{color:var(--t2);font-family:'JetBrains Mono',monospace;font-size:.8rem}
 .cc{color:var(--t2);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .oc{color:var(--t2);font-size:.84rem;font-weight:500}
@@ -637,6 +641,13 @@ const relTime = iso => {
   return new Date(iso).toLocaleDateString();
 };
 const sbadge = s => `<span class="sbadge s-${esc(s||"New")}">${esc(s||"New")}</span>`;
+const initials = n => {
+  const parts = String(n||"").trim().split(/\s+/).filter(Boolean);
+  if(!parts.length) return "?";
+  const f = parts[0][0] || "";
+  const l = parts.length > 1 ? parts[parts.length-1][0] : "";
+  return (f+l).toUpperCase();
+};
 const totalEmails = () => contacts.reduce((s,c)=>s+(c.emailsSent||0),0);
 
 function save() {
@@ -720,7 +731,12 @@ function render() {
   body.innerHTML=list.map(c=>`
     <tr data-id="${esc(c.id)}" class="${selectedIds.has(c.id)?'selected':''}">
       <td><input type="checkbox" class="cb row-cb" data-id="${esc(c.id)}" ${selectedIds.has(c.id)?'checked':''}></td>
-      <td class="nc">${esc(c.name)}</td>
+      <td class="nc">
+        <div class="name-cell">
+          <span class="avatar">${esc(initials(c.name))}</span>
+          <a class="name-link" data-action="edit" data-id="${esc(c.id)}">${esc(c.name)}</a>
+        </div>
+      </td>
       <td class="ec">${esc(c.email)}</td>
       <td class="pc">${esc(c.phone||"—")}</td>
       <td>${sbadge(c.status)}</td>
@@ -729,7 +745,6 @@ function render() {
       <td class="cc" title="${esc(c.comment)}">${esc(c.comment||"")}</td>
       <td class="ac">
         <button class="btn btn-sm" data-action="email" data-id="${esc(c.id)}">Email</button>
-        <button class="btn btn-sm" data-action="edit" data-id="${esc(c.id)}">Edit</button>
         <button class="btn btn-sm btn-danger" data-action="delete" data-id="${esc(c.id)}">Del</button>
       </td>
     </tr>`).join("");
@@ -940,11 +955,11 @@ $("contact-form").addEventListener("submit",async e=>{
   e.target.reset(); $("f-status").value="New"; closeAddDrawer(); showToast("Contact added","success");
 });
 $("contacts-body").addEventListener("click",e=>{
-  const btn=e.target.closest("button[data-action]"); if(!btn) return;
-  const id=btn.dataset.id;
-  if(btn.dataset.action==="email") openEmailModal(id);
-  if(btn.dataset.action==="edit")  openEditModal(id);
-  if(btn.dataset.action==="delete") deleteContact(id);
+  const el=e.target.closest("[data-action]"); if(!el) return;
+  const id=el.dataset.id;
+  if(el.dataset.action==="email") openEmailModal(id);
+  if(el.dataset.action==="edit")  openEditModal(id);
+  if(el.dataset.action==="delete") deleteContact(id);
 });
 $("contacts-body").addEventListener("change",e=>{
   if(!e.target.classList.contains("row-cb")) return;
