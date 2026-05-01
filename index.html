@@ -190,6 +190,76 @@ tbody tr.selected{background:rgba(255,107,53,.07);border-left:2px solid var(--ac
 @keyframes pulse{50%{opacity:.3}}
 @keyframes slideIn{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
 @keyframes fadeOut{to{opacity:0;transform:translateY(10px)}}
+
+/* Tabs */
+.tabs{display:flex;gap:.4rem;margin-bottom:1.25rem;border-bottom:1px solid var(--border);padding-bottom:0}
+.tab{padding:.7rem 1.1rem;background:none;border:none;border-bottom:2px solid transparent;color:var(--t2);font-family:inherit;font-size:.92rem;font-weight:600;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:.5rem;margin-bottom:-1px}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-count{background:var(--s3);color:var(--t2);font-size:.7rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;font-family:'JetBrains Mono',monospace}
+.tab.active .tab-count{background:var(--aglow);color:var(--accent)}
+.tab-pane{display:none}
+.tab-pane.active{display:block}
+
+/* Deals header */
+.deals-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:1rem}
+.deals-stats{display:flex;gap:1.25rem}
+.deals-stat{display:flex;flex-direction:column;gap:.15rem}
+.deals-stat-value{font-size:1.15rem;font-weight:700;color:var(--text)}
+.deals-stat-label{font-size:.62rem;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;font-family:'JetBrains Mono',monospace}
+.deals-controls{display:flex;align-items:center;gap:.6rem}
+.view-toggle{display:inline-flex;background:var(--s2);border:1px solid var(--border2);border-radius:8px;padding:2px}
+.view-toggle button{padding:.4rem .8rem;background:none;border:none;color:var(--t2);font-family:inherit;font-size:.78rem;font-weight:500;cursor:pointer;border-radius:6px;transition:all .15s}
+.view-toggle button.active{background:var(--accent);color:#0d0f17;font-weight:700}
+
+/* Stage badges */
+.stbadge{display:inline-flex;align-items:center;gap:.3rem;padding:.2rem .55rem;border-radius:999px;font-size:.7rem;font-weight:600;white-space:nowrap}
+.stbadge::before{content:"";width:5px;height:5px;border-radius:50%}
+.st-1{background:var(--bdim);color:var(--blue);border:1px solid rgba(96,165,250,.3)}.st-1::before{background:var(--blue)}
+.st-2{background:var(--cdim);color:var(--cyan);border:1px solid rgba(34,211,238,.3)}.st-2::before{background:var(--cyan)}
+.st-3{background:var(--adim);color:var(--amber);border:1px solid rgba(245,158,11,.3)}.st-3::before{background:var(--amber)}
+.st-4{background:var(--aglow);color:var(--accent);border:1px solid rgba(255,107,53,.35)}.st-4::before{background:var(--accent)}
+.st-5{background:rgba(167,139,250,.14);color:#a78bfa;border:1px solid rgba(167,139,250,.3)}.st-5::before{background:#a78bfa}
+.st-6{background:rgba(236,72,153,.14);color:#ec4899;border:1px solid rgba(236,72,153,.3)}.st-6::before{background:#ec4899}
+.st-7{background:var(--gdim);color:var(--green);border:1px solid rgba(52,211,153,.3)}.st-7::before{background:var(--green)}
+.st-8{background:var(--rdim);color:var(--red);border:1px solid rgba(248,113,113,.3)}.st-8::before{background:var(--red)}
+
+.stage-pills{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1rem}
+
+/* Kanban */
+.kanban{display:flex;gap:.85rem;overflow-x:auto;padding-bottom:.5rem;margin:0 -.25rem}
+.kanban-col{flex:0 0 280px;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:.75rem;display:flex;flex-direction:column;gap:.55rem;min-height:200px}
+.kanban-col-header{display:flex;flex-direction:column;gap:.2rem;padding-bottom:.55rem;border-bottom:1px solid var(--border)}
+.kanban-col-title{font-size:.78rem;font-weight:700;color:var(--text)}
+.kanban-col-meta{font-size:.7rem;color:var(--t3);font-family:'JetBrains Mono',monospace}
+.kanban-empty{color:var(--t3);font-size:.78rem;text-align:center;padding:1.5rem 0}
+
+/* Deal card */
+.dcard{background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:.75rem;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;gap:.45rem}
+.dcard:hover{border-color:var(--accent);transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.3)}
+.dcard-top{display:flex;align-items:center;gap:.5rem}
+.score{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:.76rem;font-weight:700;border:2px solid;flex-shrink:0;font-family:'JetBrains Mono',monospace}
+.score.lo{color:var(--red);border-color:var(--red);background:var(--rdim)}
+.score.mi{color:var(--amber);border-color:var(--amber);background:var(--adim)}
+.score.hi{color:var(--green);border-color:var(--green);background:var(--gdim)}
+.score.no{color:var(--t3);border-color:var(--border2);background:var(--s2)}
+.dcard-name{font-weight:700;font-size:.88rem;line-height:1.25;flex:1;color:var(--text)}
+.dcard-company{color:var(--t2);font-size:.78rem}
+.dcard-amount{font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--text);font-size:.85rem}
+.dcard-close{color:var(--t2);font-size:.74rem;font-family:'JetBrains Mono',monospace}
+.dcard-tags{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.1rem}
+.tagchip{font-size:.66rem;padding:.13rem .45rem;border-radius:5px;background:var(--s3);border:1px solid var(--border2);color:var(--t2);font-weight:500;white-space:nowrap}
+.tagchip.tag-followup{background:var(--cdim);color:var(--cyan);border-color:rgba(34,211,238,.3)}
+.tagchip.tag-inactive{background:var(--bdim);color:var(--blue);border-color:rgba(96,165,250,.3)}
+.tagchip.tag-warm{background:var(--gdim);color:var(--green);border-color:rgba(52,211,153,.3)}
+.tagchip.tag-q{background:var(--adim);color:var(--amber);border-color:rgba(245,158,11,.3)}
+.dcard-foot{display:flex;justify-content:space-between;align-items:center;padding-top:.35rem;border-top:1px dashed var(--border)}
+.dcard-foot .activity{font-size:.7rem;color:var(--t3);font-family:'JetBrains Mono',monospace}
+.dcard-foot .owner{font-size:.7rem;color:var(--t2);font-weight:500}
+
+.deal-row{cursor:pointer}
+.deal-row:hover{background:var(--s2)}
+.amount-cell{font-family:'JetBrains Mono',monospace;font-weight:600}
 </style>
 </head>
 <body>
@@ -213,6 +283,12 @@ tbody tr.selected{background:rgba(255,107,53,.07);border-left:2px solid var(--ac
   </div>
 </header>
 
+<div class="tabs" id="tabs">
+  <button class="tab active" data-tab="contacts">Contacts <span class="tab-count" id="tab-contacts-count">0</span></button>
+  <button class="tab" data-tab="deals">Deals <span class="tab-count" id="tab-deals-count">0</span></button>
+</div>
+
+<div class="tab-pane active" id="tab-contacts">
 <div class="body-layout">
 
   <main class="panel">
@@ -258,6 +334,48 @@ tbody tr.selected{background:rgba(255,107,53,.07);border-left:2px solid var(--ac
     </div>
   </main>
 </div>
+</div><!-- /#tab-contacts -->
+
+<div class="tab-pane" id="tab-deals">
+  <div class="panel">
+    <div class="deals-header">
+      <div class="deals-stats">
+        <div class="deals-stat"><span class="deals-stat-value" id="deals-count">0</span><span class="deals-stat-label">Deals</span></div>
+        <div class="deals-stat"><span class="deals-stat-value" id="deals-pipeline">$0</span><span class="deals-stat-label">Pipeline</span></div>
+        <div class="deals-stat"><span class="deals-stat-value" id="deals-won">$0</span><span class="deals-stat-label">Won</span></div>
+      </div>
+      <div class="deals-controls">
+        <div class="view-toggle" id="view-toggle">
+          <button class="active" data-view="kanban">Kanban</button>
+          <button data-view="table">Table</button>
+        </div>
+        <button class="btn btn-sm" id="deals-export-btn">Export CSV</button>
+        <button class="btn btn-primary btn-inline" id="add-deal-btn">+ Add Deal</button>
+      </div>
+    </div>
+
+    <div class="stage-pills" id="stage-pills">
+      <button class="pill active" data-stage="all">All</button>
+    </div>
+
+    <div class="toolbar">
+      <input type="search" id="deals-search" class="search" placeholder="Search deals by name, company, or notes...">
+    </div>
+
+    <div id="deals-kanban-view" class="kanban"></div>
+
+    <div id="deals-table-view" class="table-wrap" style="display:none">
+      <table>
+        <thead><tr>
+          <th>Score</th><th>Name</th><th>Contact / Company</th><th>Stage</th>
+          <th>Amount</th><th>Close Date</th><th>Owner</th><th>Last Activity</th><th></th>
+        </tr></thead>
+        <tbody id="deals-table-body"></tbody>
+      </table>
+      <div class="empty" id="deals-empty"><div class="empty-icon">◎</div><div>No deals yet.</div></div>
+    </div>
+  </div>
+</div><!-- /#tab-deals -->
 
 <div class="activity-panel">
   <div class="activity-header" id="activity-header">
@@ -285,6 +403,7 @@ tbody tr.selected{background:rgba(255,107,53,.07);border-left:2px solid var(--ac
       <div class="field"><label>Name</label><input type="text" id="f-name" required placeholder="Jane Doe"></div>
       <div class="field"><label>Email</label><input type="email" id="f-email" required placeholder="jane@example.com"></div>
       <div class="field"><label>Phone</label><input type="tel" id="f-phone" placeholder="(555) 123-4567"></div>
+      <div class="field"><label>Company</label><input type="text" id="f-company" placeholder="Acme Corp"></div>
       <div class="field"><label>Owner</label><input type="text" id="f-owner" placeholder="Miguel"></div>
       <div class="field"><label>Status</label>
         <select id="f-status">
@@ -361,6 +480,7 @@ tbody tr.selected{background:rgba(255,107,53,.07);border-left:2px solid var(--ac
     <div class="field"><label>Name</label><input type="text" id="e-name"></div>
     <div class="field"><label>Email</label><input type="email" id="e-email"></div>
     <div class="field"><label>Phone</label><input type="tel" id="e-phone"></div>
+    <div class="field"><label>Company</label><input type="text" id="e-company"></div>
     <div class="field"><label>Owner</label><input type="text" id="e-owner"></div>
     <div class="field"><label>Status</label>
       <select id="e-status">
@@ -373,6 +493,50 @@ tbody tr.selected{background:rgba(255,107,53,.07);border-left:2px solid var(--ac
     <div class="modal-footer">
       <button class="btn" id="cancel-edit">Cancel</button>
       <button class="btn btn-primary" id="save-edit-btn">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- Deal Modal (add + edit) -->
+<div class="modal-backdrop" id="deal-modal">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <div><h2 id="deal-modal-title">Add Deal</h2><div class="msub" id="deal-modal-sub"></div></div>
+      <button class="close-btn" id="close-deal">&times;</button>
+    </div>
+    <div class="field"><label>Deal Name</label><input type="text" id="d-name" required placeholder="INQ - Acme Corp"></div>
+    <div class="field"><label>Contact</label>
+      <select id="d-contact" required>
+        <option value="">— Select a contact —</option>
+      </select>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.85rem">
+      <div class="field"><label>Company</label><input type="text" id="d-company" placeholder="Auto-filled from contact"></div>
+      <div class="field"><label>Owner</label><input type="text" id="d-owner" placeholder="Miguel"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.85rem">
+      <div class="field"><label>Amount ($)</label><input type="number" id="d-amount" min="0" step="100" placeholder="50000"></div>
+      <div class="field"><label>Close Date</label><input type="date" id="d-close"></div>
+      <div class="field"><label>Score (1-99)</label><input type="number" id="d-score" min="1" max="99" placeholder="50"></div>
+    </div>
+    <div class="field"><label>Stage</label>
+      <select id="d-stage">
+        <option value="Lead Rating - Accepted">Lead Rating - Accepted</option>
+        <option value="Waiting for more Information">Waiting for more Information</option>
+        <option value="Proposal Pending to be Sent">Proposal Pending to be Sent</option>
+        <option value="Proposal Sent">Proposal Sent</option>
+        <option value="Proposal Approved">Proposal Approved</option>
+        <option value="Agreement Sent">Agreement Sent</option>
+        <option value="Signed - Closed Won">Signed - Closed Won</option>
+        <option value="Closed Lost">Closed Lost</option>
+      </select>
+    </div>
+    <div class="field"><label>Tags <span style="color:var(--t3);font-size:.7rem;text-transform:none;letter-spacing:0">(comma-separated, e.g. "D1 - Follow up, Warm")</span></label><input type="text" id="d-tags" placeholder="D1 - Follow up"></div>
+    <div class="field"><label>Notes</label><textarea id="d-notes" placeholder="Notes about this deal..."></textarea></div>
+    <div class="modal-footer">
+      <button class="btn btn-danger" id="delete-deal-btn" style="display:none">Delete</button>
+      <button class="btn" id="cancel-deal">Cancel</button>
+      <button class="btn btn-primary btn-inline" id="save-deal-btn">Save Deal</button>
     </div>
   </div>
 </div>
@@ -391,28 +555,61 @@ const SUPABASE_URL = "https://iobidqgcaezghdhgvwgr.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlvYmlkcWdjYWV6Z2hkaGd2d2dyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1OTczNTksImV4cCI6MjA5MzE3MzM1OX0.G_yDQmQmgyPcH8k9VAwxCYw5LHD00puEnF6ALDRPFoc";
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const SK = "miguel-crm-v2";
-const TK = "miguel-crm-tpl-v1";
-const AK = "miguel-crm-activity-open-v1";
+const SK  = "miguel-crm-v2";
+const DK  = "miguel-crm-deals-v1";
+const TK  = "miguel-crm-tpl-v1";
+const AK  = "miguel-crm-activity-open-v1";
+const TBK = "miguel-crm-active-tab-v1";
+const VK  = "miguel-crm-deals-view-v1";
+
+const STAGES = [
+  "Lead Rating - Accepted",
+  "Waiting for more Information",
+  "Proposal Pending to be Sent",
+  "Proposal Sent",
+  "Proposal Approved",
+  "Agreement Sent",
+  "Signed - Closed Won",
+  "Closed Lost"
+];
 
 let contacts = JSON.parse(localStorage.getItem(SK) || "[]");
+let deals = JSON.parse(localStorage.getItem(DK) || "[]");
 let templates = JSON.parse(localStorage.getItem(TK) || "null") || DEFAULT_TEMPLATES;
-let activities   = [];
+let activities = [];
 
 // snake_case (DB) <-> camelCase (app) mappers
 const fromDb = r => ({
   id:r.id, name:r.name, email:r.email,
-  phone:r.phone||"", owner:r.owner||"", comment:r.comment||"",
+  phone:r.phone||"", company:r.company||"", owner:r.owner||"", comment:r.comment||"",
   status:r.status||"New",
   createdAt:r.created_at, lastEmailed:r.last_emailed||"",
   emailsSent:r.emails_sent||0
 });
 const toDb = c => ({
   id:c.id, name:c.name, email:c.email,
-  phone:c.phone||null, owner:c.owner||null, comment:c.comment||null,
+  phone:c.phone||null, company:c.company||null, owner:c.owner||null, comment:c.comment||null,
   status:c.status||"New",
   created_at:c.createdAt, last_emailed:c.lastEmailed||null,
   emails_sent:c.emailsSent||0
+});
+const fromDbDeal = r => ({
+  id:r.id, name:r.name,
+  contactId:r.contact_id||"", contactName:r.contact_name||"",
+  company:r.company||"", amount:Number(r.amount)||0,
+  closeDate:r.close_date||"", stage:r.stage||STAGES[0],
+  score:Number(r.score)||0, tags:r.tags||[],
+  owner:r.owner||"", notes:r.notes||"",
+  createdAt:r.created_at, lastActivity:r.last_activity||r.created_at
+});
+const toDbDeal = d => ({
+  id:d.id, name:d.name,
+  contact_id:d.contactId||null, contact_name:d.contactName||null,
+  company:d.company||null, amount:Number(d.amount)||0,
+  close_date:d.closeDate||null, stage:d.stage||STAGES[0],
+  score:Number(d.score)||0, tags:d.tags||[],
+  owner:d.owner||null, notes:d.notes||null,
+  created_at:d.createdAt, last_activity:d.lastActivity||d.createdAt
 });
 const fromDbActivity = a => ({
   contactId:a.contact_id, contactName:a.contact_name,
@@ -426,6 +623,11 @@ let activeTpl    = null;
 let bulkTpl      = null;
 let editingId    = null;
 let actOpen      = localStorage.getItem(AK) === "1";
+let activeTab    = localStorage.getItem(TBK) || "contacts";
+let dealsView    = localStorage.getItem(VK) || "kanban";
+let stageFilter  = "all";
+let dealsSearch  = "";
+let editingDealId = null;
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -444,7 +646,38 @@ const totalEmails = () => contacts.reduce((s,c)=>s+(c.emailsSent||0),0);
 
 function save() {
   localStorage.setItem(SK, JSON.stringify(contacts));
+  localStorage.setItem(DK, JSON.stringify(deals));
   localStorage.setItem(TK, JSON.stringify(templates));
+}
+
+function fmtMoney(n) {
+  const v = Number(n) || 0;
+  if(v >= 1000000) return "$" + (v/1000000).toFixed(1).replace(/\.0$/,"") + "M";
+  if(v >= 1000)    return "$" + (v/1000).toFixed(1).replace(/\.0$/,"") + "K";
+  return "$" + v.toLocaleString();
+}
+function fmtMoneyFull(n) { return "$" + (Number(n)||0).toLocaleString(); }
+function fmtDate(iso) {
+  if(!iso) return "—";
+  const d = new Date(iso);
+  return d.toLocaleDateString(undefined, {month:"short", day:"numeric", year:"numeric"});
+}
+function stageIdx(s) { const i = STAGES.indexOf(s); return i < 0 ? 0 : i + 1; }
+function stagebadge(s) { return `<span class="stbadge st-${stageIdx(s)}">${esc(s)}</span>`; }
+function scoreClass(n) {
+  const v = Number(n) || 0;
+  if(!v) return "no";
+  if(v < 30) return "lo";
+  if(v < 60) return "mi";
+  return "hi";
+}
+function tagClass(tag) {
+  const t = tag.toLowerCase();
+  if(t.includes("follow")) return "tagchip tag-followup";
+  if(t.includes("inactive") || t.includes("no response")) return "tagchip tag-inactive";
+  if(t.includes("warm")) return "tagchip tag-warm";
+  if(t.includes("q'")) return "tagchip tag-q";
+  return "tagchip";
 }
 
 function setSyncStatus(state, label) {
@@ -457,10 +690,15 @@ function setSyncStatus(state, label) {
 async function syncFromSupabase() {
   setSyncStatus("syncing","Syncing");
   try {
-    const {data,error} = await sb.from("contacts").select("*").order("created_at",{ascending:false});
-    if(error) throw error;
-    contacts = data.map(fromDb);
-    save(); setSyncStatus("connected","Connected"); render();
+    const [c,d] = await Promise.all([
+      sb.from("contacts").select("*").order("created_at",{ascending:false}),
+      sb.from("deals").select("*").order("created_at",{ascending:false})
+    ]);
+    if(c.error) throw c.error;
+    if(d.error) throw d.error;
+    contacts = c.data.map(fromDb);
+    deals = d.data.map(fromDbDeal);
+    save(); setSyncStatus("connected","Connected"); render(); renderDeals();
   } catch(err) {
     setSyncStatus("error","Error");
     showToast("Sync failed: "+err.message,"error");
@@ -488,6 +726,7 @@ async function connect() {
 function render() {
   $("contact-count").textContent = contacts.length;
   $("email-count").textContent   = totalEmails();
+  if($("tab-contacts-count")) updateTabCounts();
   let list = contacts;
   if(statusFilter!=="all") list=list.filter(c=>(c.status||"New")===statusFilter);
   if(searchTerm) {
@@ -536,7 +775,7 @@ function renderActivity() {
 }
 
 async function addContact(c) {
-  const local={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),name:c.name.trim(),email:c.email.trim(),phone:(c.phone||"").trim(),owner:(c.owner||"").trim(),comment:(c.comment||"").trim(),status:c.status||"New",createdAt:new Date().toISOString(),lastEmailed:"",emailsSent:0};
+  const local={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),name:c.name.trim(),email:c.email.trim(),phone:(c.phone||"").trim(),company:(c.company||"").trim(),owner:(c.owner||"").trim(),comment:(c.comment||"").trim(),status:c.status||"New",createdAt:new Date().toISOString(),lastEmailed:"",emailsSent:0};
   contacts.unshift(local); save(); render();
   try {
     const {error} = await sb.from("contacts").insert(toDb(local));
@@ -577,7 +816,8 @@ function openEditModal(id) {
   const c=contacts.find(x=>x.id===id); if(!c) return;
   editingId=id;
   $("e-name").value=c.name||""; $("e-email").value=c.email||"";
-  $("e-phone").value=c.phone||""; $("e-owner").value=c.owner||"";
+  $("e-phone").value=c.phone||""; $("e-company").value=c.company||"";
+  $("e-owner").value=c.owner||"";
   $("e-status").value=c.status||"New"; $("e-comment").value=c.comment||"";
   $("edit-sub").textContent=c.email;
   $("edit-modal").classList.add("active");
@@ -585,7 +825,7 @@ function openEditModal(id) {
 function closeEditModal(){$("edit-modal").classList.remove("active");editingId=null;}
 async function saveEdit() {
   if(!editingId) return;
-  const fields={name:$("e-name").value.trim(),email:$("e-email").value.trim(),phone:$("e-phone").value.trim(),owner:$("e-owner").value.trim(),status:$("e-status").value,comment:$("e-comment").value.trim()};
+  const fields={name:$("e-name").value.trim(),email:$("e-email").value.trim(),phone:$("e-phone").value.trim(),company:$("e-company").value.trim(),owner:$("e-owner").value.trim(),status:$("e-status").value,comment:$("e-comment").value.trim()};
   if(!fields.name||!fields.email){showToast("Name and email required","error");return;}
   const idx=contacts.findIndex(c=>c.id===editingId);
   if(idx>=0) contacts[idx]={...contacts[idx],...fields};
@@ -593,7 +833,8 @@ async function saveEdit() {
   try {
     await sb.from("contacts").update({
       name:fields.name, email:fields.email,
-      phone:fields.phone||null, owner:fields.owner||null,
+      phone:fields.phone||null, company:fields.company||null,
+      owner:fields.owner||null,
       status:fields.status, comment:fields.comment||null
     }).eq("id",editingId);
   } catch(_) {}
@@ -718,7 +959,7 @@ $("close-add").addEventListener("click",closeAddDrawer);
 $("add-drawer").addEventListener("click",e=>{if(e.target===$("add-drawer"))closeAddDrawer();});
 $("contact-form").addEventListener("submit",async e=>{
   e.preventDefault();
-  await addContact({name:$("f-name").value,email:$("f-email").value,phone:$("f-phone").value,owner:$("f-owner").value,status:$("f-status").value,comment:$("f-comment").value});
+  await addContact({name:$("f-name").value,email:$("f-email").value,phone:$("f-phone").value,company:$("f-company").value,owner:$("f-owner").value,status:$("f-status").value,comment:$("f-comment").value});
   e.target.reset(); $("f-status").value="New"; closeAddDrawer(); showToast("Contact added","success");
 });
 $("contacts-body").addEventListener("click",e=>{
@@ -788,12 +1029,291 @@ document.addEventListener("click",e=>{
 });
 document.addEventListener("keydown",e=>{
   if(e.key!=="Escape") return;
-  closeSettings();closeEmailModal();closeBulkEmailModal();closeEditModal();closeAddDrawer();
+  closeSettings();closeEmailModal();closeBulkEmailModal();closeEditModal();closeAddDrawer();closeDealModal();
+});
+
+// ─── Deals ─────────────────────────────────────────────────────
+function updateTabCounts() {
+  $("tab-contacts-count").textContent = contacts.length;
+  $("tab-deals-count").textContent = deals.length;
+}
+
+function renderStagePills() {
+  const counts = {all: deals.length};
+  STAGES.forEach(s => counts[s] = 0);
+  deals.forEach(d => { counts[d.stage] = (counts[d.stage]||0) + 1; });
+  const pills = $("stage-pills");
+  pills.innerHTML = `<button class="pill${stageFilter==="all"?" active":""}" data-stage="all">All <span style="opacity:.6;margin-left:.3rem">${counts.all}</span></button>`
+    + STAGES.map(s => `<button class="pill${stageFilter===s?" active":""}" data-stage="${esc(s)}">${esc(s)} <span style="opacity:.6;margin-left:.3rem">${counts[s]||0}</span></button>`).join("");
+}
+
+function filteredDeals() {
+  let list = deals;
+  if(stageFilter !== "all") list = list.filter(d => d.stage === stageFilter);
+  if(dealsSearch) {
+    const t = dealsSearch.toLowerCase();
+    list = list.filter(d => [d.name,d.company,d.contactName,d.notes,d.owner,(d.tags||[]).join(" ")].some(v => (v||"").toLowerCase().includes(t)));
+  }
+  return list;
+}
+
+function dealCard(d) {
+  const tags = (d.tags||[]).slice(0,3).map(t => `<span class="${tagClass(t)}">${esc(t)}</span>`).join("");
+  const more = (d.tags||[]).length > 3 ? `<span class="tagchip">+${d.tags.length-3}</span>` : "";
+  return `
+    <div class="dcard" data-id="${esc(d.id)}">
+      <div class="dcard-top">
+        <div class="score ${scoreClass(d.score)}">${d.score||"—"}</div>
+        <div class="dcard-name">${esc(d.name)}</div>
+      </div>
+      <div class="dcard-company">${esc(d.company || d.contactName || "—")}</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:.5rem">
+        <span class="dcard-amount">${fmtMoney(d.amount)}</span>
+        <span class="dcard-close">${fmtDate(d.closeDate)}</span>
+      </div>
+      ${tags || more ? `<div class="dcard-tags">${tags}${more}</div>` : ""}
+      <div class="dcard-foot">
+        <span class="owner">${esc(d.owner||"—")}</span>
+        <span class="activity">${relTime(d.lastActivity || d.createdAt)}</span>
+      </div>
+    </div>`;
+}
+
+function renderKanban() {
+  const list = filteredDeals();
+  const byStage = {};
+  STAGES.forEach(s => byStage[s] = []);
+  list.forEach(d => { if(byStage[d.stage]) byStage[d.stage].push(d); else byStage[STAGES[0]].push(d); });
+  $("deals-kanban-view").innerHTML = STAGES.map(s => {
+    const items = byStage[s] || [];
+    const total = items.reduce((sum,d) => sum + (Number(d.amount)||0), 0);
+    return `
+      <div class="kanban-col">
+        <div class="kanban-col-header">
+          <span class="kanban-col-title">${esc(s)}</span>
+          <span class="kanban-col-meta">${items.length} deals · ${fmtMoney(total)}</span>
+        </div>
+        ${items.length ? items.map(dealCard).join("") : '<div class="kanban-empty">No deals</div>'}
+      </div>`;
+  }).join("");
+}
+
+function renderTable() {
+  const list = filteredDeals();
+  const body = $("deals-table-body"), empty = $("deals-empty");
+  if(!list.length) { body.innerHTML=""; empty.style.display="block"; return; }
+  empty.style.display = "none";
+  body.innerHTML = list.map(d => `
+    <tr class="deal-row" data-id="${esc(d.id)}">
+      <td><div class="score ${scoreClass(d.score)}" style="margin:0">${d.score||"—"}</div></td>
+      <td class="nc">${esc(d.name)}</td>
+      <td class="oc">${esc(d.contactName||"—")}<br><span style="color:var(--t3);font-size:.74rem">${esc(d.company||"")}</span></td>
+      <td>${stagebadge(d.stage)}</td>
+      <td class="amount-cell">${fmtMoneyFull(d.amount)}</td>
+      <td class="dc">${fmtDate(d.closeDate)}</td>
+      <td class="oc">${esc(d.owner||"—")}</td>
+      <td class="dc">${relTime(d.lastActivity || d.createdAt)}</td>
+      <td class="ac"><button class="btn btn-sm" data-action="edit-deal" data-id="${esc(d.id)}">Edit</button></td>
+    </tr>`).join("");
+}
+
+function renderDeals() {
+  const total = deals.length;
+  const pipelineSum = deals.filter(d => d.stage !== "Closed Lost" && d.stage !== "Signed - Closed Won").reduce((s,d) => s + (Number(d.amount)||0), 0);
+  const wonSum = deals.filter(d => d.stage === "Signed - Closed Won").reduce((s,d) => s + (Number(d.amount)||0), 0);
+  $("deals-count").textContent = total;
+  $("deals-pipeline").textContent = fmtMoney(pipelineSum);
+  $("deals-won").textContent = fmtMoney(wonSum);
+  updateTabCounts();
+  renderStagePills();
+  if(dealsView === "kanban") renderKanban(); else renderTable();
+  $("deals-kanban-view").style.display = dealsView === "kanban" ? "flex" : "none";
+  $("deals-table-view").style.display  = dealsView === "table"  ? "block" : "none";
+  document.querySelectorAll("#view-toggle button").forEach(b => b.classList.toggle("active", b.dataset.view === dealsView));
+}
+
+function populateContactDropdown() {
+  const opts = ['<option value="">— Select a contact —</option>']
+    .concat(contacts.map(c => `<option value="${esc(c.id)}">${esc(c.name)}${c.company?" — "+esc(c.company):""}</option>`));
+  $("d-contact").innerHTML = opts.join("");
+}
+
+function openAddDealModal() {
+  editingDealId = null;
+  $("deal-modal-title").textContent = "Add Deal";
+  $("deal-modal-sub").textContent = "";
+  $("delete-deal-btn").style.display = "none";
+  populateContactDropdown();
+  $("d-name").value = "";
+  $("d-contact").value = "";
+  $("d-company").value = "";
+  $("d-owner").value = "Miguel";
+  $("d-amount").value = "";
+  $("d-close").value = "";
+  $("d-score").value = "";
+  $("d-stage").value = "Lead Rating - Accepted";
+  $("d-tags").value = "";
+  $("d-notes").value = "";
+  $("deal-modal").classList.add("active");
+  setTimeout(()=>$("d-name").focus(), 50);
+}
+
+function openEditDealModal(id) {
+  const d = deals.find(x => x.id === id);
+  if(!d) return;
+  editingDealId = id;
+  $("deal-modal-title").textContent = "Edit Deal";
+  $("deal-modal-sub").textContent = d.contactName ? `${d.contactName} — ${d.company||""}` : "";
+  $("delete-deal-btn").style.display = "inline-flex";
+  populateContactDropdown();
+  $("d-name").value    = d.name || "";
+  $("d-contact").value = d.contactId || "";
+  $("d-company").value = d.company || "";
+  $("d-owner").value   = d.owner || "";
+  $("d-amount").value  = d.amount || "";
+  $("d-close").value   = d.closeDate ? d.closeDate.slice(0,10) : "";
+  $("d-score").value   = d.score || "";
+  $("d-stage").value   = d.stage || STAGES[0];
+  $("d-tags").value    = (d.tags||[]).join(", ");
+  $("d-notes").value   = d.notes || "";
+  $("deal-modal").classList.add("active");
+}
+
+function closeDealModal() { $("deal-modal").classList.remove("active"); editingDealId = null; }
+
+async function saveDeal() {
+  const name = $("d-name").value.trim();
+  const contactId = $("d-contact").value;
+  if(!name) { showToast("Deal name required","error"); return; }
+  if(!contactId) { showToast("Pick a contact","error"); return; }
+  const c = contacts.find(x => x.id === contactId);
+  const tags = $("d-tags").value.split(",").map(t => t.trim()).filter(Boolean);
+  const closeDateStr = $("d-close").value;
+  const fields = {
+    name,
+    contactId,
+    contactName: c ? c.name : "",
+    company:     $("d-company").value.trim() || (c ? c.company || "" : ""),
+    amount:      Number($("d-amount").value) || 0,
+    closeDate:   closeDateStr ? new Date(closeDateStr).toISOString() : "",
+    stage:       $("d-stage").value,
+    score:       Number($("d-score").value) || 0,
+    tags,
+    owner:       $("d-owner").value.trim(),
+    notes:       $("d-notes").value.trim()
+  };
+  if(editingDealId) {
+    const idx = deals.findIndex(d => d.id === editingDealId);
+    const now = new Date().toISOString();
+    if(idx >= 0) deals[idx] = { ...deals[idx], ...fields, lastActivity: now };
+    save(); renderDeals(); closeDealModal();
+    showToast("Deal updated", "success");
+    try {
+      await sb.from("deals").update({...toDbDeal(deals[idx]), last_activity:now}).eq("id", editingDealId);
+    } catch(err) {
+      showToast("Saved locally — sync failed: " + err.message, "error");
+    }
+  } else {
+    const now = new Date().toISOString();
+    const local = {
+      id: Date.now().toString(36) + Math.random().toString(36).slice(2,6),
+      ...fields,
+      createdAt: now,
+      lastActivity: now
+    };
+    deals.unshift(local);
+    save(); renderDeals(); closeDealModal();
+    showToast("Deal added", "success");
+    try {
+      const { error } = await sb.from("deals").insert(toDbDeal(local));
+      if(error) throw error;
+    } catch(err) {
+      showToast("Saved locally — sync failed: " + err.message, "error");
+    }
+  }
+}
+
+async function deleteDeal() {
+  if(!editingDealId) return;
+  if(!confirm("Delete this deal?")) return;
+  const id = editingDealId;
+  deals = deals.filter(d => d.id !== id);
+  save(); renderDeals(); closeDealModal();
+  showToast("Deal deleted", "success");
+  try { await sb.from("deals").delete().eq("id", id); } catch(_) {}
+}
+
+function exportDealsCSV() {
+  if(!deals.length) { showToast("No deals to export"); return; }
+  const headers = ["Name","Contact","Company","Stage","Score","Amount","Close Date","Owner","Tags","Notes","Created At","Last Activity"];
+  const q = v => { const s = String(v??""); return /[",\n]/.test(s) ? `"${s.replace(/"/g,'""')}"` : s; };
+  const rows = deals.map(d => [d.name,d.contactName,d.company,d.stage,d.score,d.amount,d.closeDate,d.owner,(d.tags||[]).join(";"),d.notes,d.createdAt,d.lastActivity].map(q).join(","));
+  const blob = new Blob([[headers.join(","),...rows].join("\n")], { type:"text/csv;charset=utf-8;" });
+  const a = Object.assign(document.createElement("a"), { href:URL.createObjectURL(blob), download:`deals-${new Date().toISOString().slice(0,10)}.csv` });
+  a.click();
+}
+
+function switchTab(name) {
+  activeTab = name;
+  localStorage.setItem(TBK, name);
+  document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.tab === name));
+  document.querySelectorAll(".tab-pane").forEach(p => p.classList.toggle("active", p.id === "tab-" + name));
+  if(name === "deals") renderDeals();
+}
+
+$("tabs").addEventListener("click", e => {
+  const t = e.target.closest(".tab");
+  if(t) switchTab(t.dataset.tab);
+});
+
+$("add-deal-btn").addEventListener("click", openAddDealModal);
+$("close-deal").addEventListener("click", closeDealModal);
+$("cancel-deal").addEventListener("click", closeDealModal);
+$("save-deal-btn").addEventListener("click", saveDeal);
+$("delete-deal-btn").addEventListener("click", deleteDeal);
+$("deal-modal").addEventListener("click", e => { if(e.target === $("deal-modal")) closeDealModal(); });
+
+$("deals-kanban-view").addEventListener("click", e => {
+  const card = e.target.closest(".dcard");
+  if(card) openEditDealModal(card.dataset.id);
+});
+
+$("deals-table-body").addEventListener("click", e => {
+  const btn = e.target.closest("button[data-action='edit-deal']");
+  if(btn) { openEditDealModal(btn.dataset.id); return; }
+  const row = e.target.closest(".deal-row");
+  if(row) openEditDealModal(row.dataset.id);
+});
+
+$("stage-pills").addEventListener("click", e => {
+  const p = e.target.closest(".pill");
+  if(!p) return;
+  stageFilter = p.dataset.stage;
+  renderDeals();
+});
+
+$("deals-search").addEventListener("input", e => { dealsSearch = e.target.value; renderDeals(); });
+
+$("view-toggle").addEventListener("click", e => {
+  const b = e.target.closest("button[data-view]");
+  if(!b) return;
+  dealsView = b.dataset.view;
+  localStorage.setItem(VK, dealsView);
+  renderDeals();
+});
+
+$("deals-export-btn").addEventListener("click", exportDealsCSV);
+
+$("d-contact").addEventListener("change", e => {
+  const c = contacts.find(x => x.id === e.target.value);
+  if(c && !$("d-company").value) $("d-company").value = c.company || "";
 });
 
 // Init
 if(actOpen){$("activity-body").classList.add("open");$("activity-toggle").classList.add("open");}
+switchTab(activeTab);
 render();
+renderDeals();
 syncFromSupabase().then(()=>{if(actOpen)loadActivity();});
 </script>
 </body>
