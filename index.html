@@ -49,25 +49,12 @@ html,body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;
 .stat-value{font-size:.95rem;font-weight:700;color:#fff}
 .stat-label{font-size:.6rem;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:.1em;font-family:'JetBrains Mono',monospace}
 
-.topbar .sync-badge{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.15);color:rgba(255,255,255,0.75)}
-.topbar .sync-badge:hover{border-color:rgba(255,255,255,0.35);color:#fff}
-.topbar .sync-badge.connected{color:#7be0c8;border-color:rgba(123,224,200,0.4)}
 
 @media(max-width:760px){
   .topbar-search{max-width:none}
   .stats{display:none}
   .kbd-hint{display:none}
 }
-
-/* Sync badge */
-.sync-badge{display:inline-flex;align-items:center;gap:.4rem;padding:.35rem .7rem;border-radius:999px;font-size:.72rem;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.06em;border:1px solid var(--border);background:var(--s2);color:var(--t2);cursor:pointer;transition:all .15s}
-.sync-badge:hover{border-color:var(--border2);color:var(--text)}
-.sync-badge .dot{width:7px;height:7px;border-radius:50%;background:var(--t3)}
-.sync-badge.connected{color:var(--green);border-color:rgba(52,211,153,.3)}
-.sync-badge.connected .dot{background:var(--green);box-shadow:0 0 8px var(--green)}
-.sync-badge.error{color:var(--red);border-color:rgba(248,113,113,.3)}
-.sync-badge.error .dot{background:var(--red)}
-.sync-badge.syncing .dot{background:var(--blue);animation:pulse 1s ease-in-out infinite}
 
 /* Layout */
 .body-layout{display:block}
@@ -303,8 +290,6 @@ tbody tr.selected{background:rgba(255,107,53,.07);border-left:2px solid var(--ac
         <div class="stat"><div class="stat-value" id="contact-count">0</div><div class="stat-label">Contacts</div></div>
         <div class="stat"><div class="stat-value" id="email-count">0</div><div class="stat-label">Emails</div></div>
       </div>
-      <button class="btn-icon" id="refresh-btn" title="Refresh">↻</button>
-      <button class="sync-badge" id="sync-badge"><span class="dot"></span><span id="sync-label">Offline</span></button>
     </div>
   </div>
 </header>
@@ -443,23 +428,6 @@ tbody tr.selected{background:rgba(255,107,53,.07);border-left:2px solid var(--ac
       <button type="submit" class="btn btn-primary">+ Add Contact</button>
     </form>
   </aside>
-</div>
-
-<!-- Settings Modal -->
-<div class="modal-backdrop" id="settings-modal">
-  <div class="modal">
-    <div class="modal-header">
-      <div><h2>Sync</h2><div class="msub">Backed by Supabase</div></div>
-      <button class="close-btn" id="close-settings">&times;</button>
-    </div>
-    <div class="help">
-      All contacts, emails, and activity are synced automatically to your Supabase project.<br><br>
-      Click <strong>↻ Refresh</strong> in the header to pull the latest data.
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-primary" id="connect-btn">↻ Sync Now</button>
-    </div>
-  </div>
 </div>
 
 <!-- Single Email Modal -->
@@ -707,15 +675,7 @@ function tagClass(tag) {
   return "tagchip";
 }
 
-function setSyncStatus(state, label) {
-  const b = $("sync-badge");
-  b.classList.remove("connected","syncing","error");
-  if(state) b.classList.add(state);
-  $("sync-label").textContent = label;
-}
-
 async function syncFromSupabase() {
-  setSyncStatus("syncing","Syncing");
   try {
     const [c,d] = await Promise.all([
       sb.from("contacts").select("*").order("created_at",{ascending:false}),
@@ -725,9 +685,8 @@ async function syncFromSupabase() {
     if(d.error) throw d.error;
     contacts = c.data.map(fromDb);
     deals = d.data.map(fromDbDeal);
-    save(); setSyncStatus("connected","Connected"); render(); renderDeals();
+    save(); render(); renderDeals();
   } catch(err) {
-    setSyncStatus("error","Error");
     showToast("Sync failed: "+err.message,"error");
   }
 }
@@ -739,15 +698,6 @@ async function loadActivity() {
     activities = data.map(fromDbActivity);
     renderActivity();
   } catch(_) {}
-}
-
-function openSettings() { $("settings-modal").classList.add("active"); }
-function closeSettings() { $("settings-modal").classList.remove("active"); }
-
-async function connect() {
-  closeSettings();
-  await syncFromSupabase();
-  if($("sync-badge").classList.contains("connected")) loadActivity();
 }
 
 function render() {
@@ -1026,11 +976,6 @@ $("filter-pills").addEventListener("click",e=>{
 });
 $("search").addEventListener("input",e=>{searchTerm=e.target.value;render();});
 $("export-btn").addEventListener("click",exportCSV);
-$("refresh-btn").addEventListener("click",async()=>{await syncFromSupabase();loadActivity();});
-$("sync-badge").addEventListener("click",openSettings);
-$("close-settings").addEventListener("click",closeSettings);
-$("connect-btn").addEventListener("click",connect);
-$("settings-modal").addEventListener("click",e=>{if(e.target===$("settings-modal"))closeSettings();});
 $("close-email").addEventListener("click",closeEmailModal);
 $("cancel-email").addEventListener("click",closeEmailModal);
 $("send-email-btn").addEventListener("click",sendEmail);
@@ -1056,7 +1001,7 @@ document.addEventListener("click",e=>{
 });
 document.addEventListener("keydown",e=>{
   if(e.key!=="Escape") return;
-  closeSettings();closeEmailModal();closeBulkEmailModal();closeEditModal();closeAddDrawer();closeDealModal();
+  closeEmailModal();closeBulkEmailModal();closeEditModal();closeAddDrawer();closeDealModal();
 });
 
 // ─── Deals ─────────────────────────────────────────────────────
