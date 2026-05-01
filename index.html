@@ -28,6 +28,8 @@ html,body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;
 .topbar-inner{max-width:1600px;margin:0 auto;padding:.6rem 1.25rem;display:flex;align-items:center;gap:.85rem}
 .brand{display:flex;align-items:center;gap:.85rem;flex-shrink:0}
 .logo{width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,var(--accent) 0%,#ff8c42 50%,var(--a2) 100%);display:grid;place-items:center;font-weight:800;color:#fff;font-size:1rem;box-shadow:0 4px 14px var(--aglow);flex-shrink:0}
+.brand-name{color:#fff;font-weight:700;font-size:.92rem;letter-spacing:-.01em;white-space:nowrap}
+@media(max-width:760px){.brand-name{display:none}}
 
 .topbar-search{flex:1;max-width:680px;margin:0 auto;display:flex;align-items:center;gap:.55rem;background:var(--topbar-input);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:.5rem .85rem;transition:border-color .15s,background .15s}
 .topbar-search:focus-within{border-color:var(--accent);background:#16243a}
@@ -288,7 +290,8 @@ tbody tr.selected{background:rgba(255,107,53,.07);border-left:2px solid var(--ac
 <header class="topbar">
   <div class="topbar-inner">
     <div class="brand">
-      <div class="logo" title="Miguel's better HubSpot">M</div>
+      <div class="logo">M</div>
+      <div class="brand-name">Miguel's Better HubSpot</div>
     </div>
     <div class="topbar-search">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
