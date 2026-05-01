@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Miguel's better HubSpot</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0d0f17; --surface:#161922; --s2:#1e2230; --s3:#252a3a;
+  --border:rgba(255,255,255,0.13); --border2:rgba(255,255,255,0.25);
+  --text:#eef0f7; --t2:#b0b8cc; --t3:#717a8f;
+  --accent:#ff6b35; --aglow:rgba(255,107,53,0.18); --a2:#f7c548;
+  --green:#34d399; --gdim:rgba(52,211,153,0.14);
+  --red:#f87171; --rdim:rgba(248,113,113,0.14);
+  --blue:#60a5fa; --bdim:rgba(96,165,250,0.14);
+  --amber:#f59e0b; --adim:rgba(245,158,11,0.14);
+  --cyan:#22d3ee; --cdim:rgba(34,211,238,0.14);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;background:radial-gradient(800px 400px at 0% 0%,rgba(255,107,53,0.07),transparent 60%),radial-gradient(700px 500px at 100% 0%,rgba(96,165,250,0.05),transparent 60%);pointer-events:none;z-index:0}
+.app{position:relative;z-index:1;max-width:1600px;margin:0 auto;padding:1.5rem 2rem 4rem}
+
+/* Header */
+.header{display:flex;align-items:center;justify-content:space-between;padding-bottom:1.25rem;border-bottom:1px solid var(--border);margin-bottom:1.5rem;gap:1rem}
+.brand{display:flex;align-items:center;gap:.85rem}
+.logo{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--accent) 0%,#ff8c42 50%,var(--a2) 100%);display:grid;place-items:center;font-weight:800;color:#0a0b10;font-size:1.2rem;box-shadow:0 6px 20px var(--aglow);flex-shrink:0}
+.brand-text h1{font-size:1.1rem;font-weight:700;letter-spacing:-.02em}
+.brand-text .sub{font-size:.7rem;color:var(--t3);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.08em;margin-top:2px}
+.header-right{display:flex;align-items:center;gap:1.25rem}
+.stats{display:flex;gap:1.25rem}
+.stat{text-align:right}
+.stat-value{font-size:1.4rem;font-weight:700}
+.stat-label{font-size:.65rem;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;font-family:'JetBrains Mono',monospace}
+
+/* Sync badge */
+.sync-badge{display:inline-flex;align-items:center;gap:.4rem;padding:.35rem .7rem;border-radius:999px;font-size:.72rem;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.06em;border:1px solid var(--border);background:var(--s2);color:var(--t2);cursor:pointer;transition:all .15s}
+.sync-badge:hover{border-color:var(--border2);color:var(--text)}
+.sync-badge .dot{width:7px;height:7px;border-radius:50%;background:var(--t3)}
+.sync-badge.connected{color:var(--green);border-color:rgba(52,211,153,.3)}
+.sync-badge.connected .dot{background:var(--green);box-shadow:0 0 8px var(--green)}
+.sync-badge.error{color:var(--red);border-color:rgba(248,113,113,.3)}
+.sync-badge.error .dot{background:var(--red)}
+.sync-badge.syncing .dot{background:var(--blue);animation:pulse 1s ease-in-out infinite}
+
+/* Layout */
+.body-layout{display:grid;grid-template-columns:340px 1fr;gap:1.5rem;align-items:start}
+@media(max-width:1024px){.body-layout{grid-template-columns:1fr}}
+
+/* Panel */
+.panel{background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:1.25rem}
+.panel-title{font-size:.92rem;font-weight:700;margin-bottom:1.1rem;display:flex;align-items:center;gap:.55rem;color:var(--text)}
+.panel-title::before{content:"";width:3px;height:13px;background:var(--accent);border-radius:2px}
+
+/* Form */
+.field{margin-bottom:.9rem}
+.field label{display:block;font-size:.75rem;color:var(--t2);font-weight:600;margin-bottom:.4rem;letter-spacing:.04em;text-transform:uppercase}
+.field input,.field textarea,.field select{width:100%;background:var(--s2);border:1px solid var(--border2);color:var(--text);padding:.6rem .8rem;border-radius:8px;font-family:inherit;font-size:.88rem;transition:border-color .15s,background .15s}
+.field input:focus,.field textarea:focus,.field select:focus{outline:none;border-color:var(--accent);background:var(--s3);box-shadow:0 0 0 3px var(--aglow)}
+.field input::placeholder,.field textarea::placeholder{color:var(--t3)}
+.field textarea{resize:vertical;min-height:72px}
+.field select option{background:var(--s3)}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;padding:.6rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--s2);color:var(--text);font-family:inherit;font-size:.82rem;font-weight:500;cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn:hover{background:var(--s3);border-color:var(--border2)}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:#0a0b10;font-weight:700;width:100%;padding:.7rem}
+.btn-primary:hover{background:#ff8045;border-color:#ff8045}
+.btn-sm{padding:.3rem .6rem;font-size:.75rem;border-radius:6px}
+.btn-danger:hover{background:var(--rdim);border-color:var(--red);color:var(--red)}
+.btn-ghost{background:transparent;border-color:transparent}
+.btn-ghost:hover{background:var(--s3);border-color:var(--border)}
+
+/* Filter pills */
+.filter-pills{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.9rem}
+.pill{padding:.32rem .8rem;border-radius:999px;border:1px solid var(--border2);background:var(--s2);color:var(--t2);font-size:.76rem;font-weight:500;cursor:pointer;transition:all .15s}
+.pill:hover{border-color:var(--border2);color:var(--text);background:var(--s3)}
+.pill.active{background:var(--accent);border-color:var(--accent);color:#0d0f17;font-weight:700}
+
+/* Status badges */
+.sbadge{display:inline-flex;align-items:center;gap:.3rem;padding:.2rem .55rem;border-radius:999px;font-size:.72rem;font-weight:600;white-space:nowrap}
+.sbadge::before{content:"";width:5px;height:5px;border-radius:50%}
+.s-New{background:var(--bdim);color:var(--blue);border:1px solid rgba(96,165,250,.25)}.s-New::before{background:var(--blue)}
+.s-Contacted{background:var(--adim);color:var(--amber);border:1px solid rgba(245,158,11,.25)}.s-Contacted::before{background:var(--amber)}
+.s-Engaged{background:var(--cdim);color:var(--cyan);border:1px solid rgba(34,211,238,.25)}.s-Engaged::before{background:var(--cyan)}
+.s-Customer{background:var(--gdim);color:var(--green);border:1px solid rgba(52,211,153,.25)}.s-Customer::before{background:var(--green)}
+.s-Lost{background:var(--rdim);color:var(--red);border:1px solid rgba(248,113,113,.25)}.s-Lost::before{background:var(--red)}
+
+/* Toolbar */
+.toolbar{display:flex;align-items:center;gap:.65rem;margin-bottom:.9rem;flex-wrap:wrap}
+.search{flex:1;min-width:180px;background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:.55rem .8rem;color:var(--text);font-family:inherit;font-size:.88rem}
+.search:focus{outline:none;border-color:var(--accent)}
+
+/* Bulk bar */
+.bulk-bar{display:none;align-items:center;gap:.65rem;padding:.6rem .85rem;background:var(--s3);border:1px solid var(--border2);border-radius:8px;margin-bottom:.65rem;font-size:.82rem}
+.bulk-bar.active{display:flex}
+.bulk-count{color:var(--t2);font-weight:500;flex:1}
+.bulk-count strong{color:var(--text)}
+
+/* Table */
+.table-wrap{overflow-x:auto;border-radius:8px}
+table{width:100%;border-collapse:collapse;min-width:700px}
+thead th{text-align:left;font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:var(--t2);font-weight:700;padding:.75rem .7rem;border-bottom:2px solid var(--border2);font-family:'JetBrains Mono',monospace;white-space:nowrap;background:var(--s2)}
+thead th:first-child{width:36px}
+tbody td{padding:.8rem .7rem;border-bottom:1px solid var(--border);font-size:.86rem;vertical-align:middle}
+tbody tr:hover{background:var(--s2)}
+tbody tr.selected{background:rgba(255,107,53,.07);border-left:2px solid var(--accent)}
+.nc{font-weight:600;white-space:nowrap;color:var(--text)}
+.ec,.pc{color:var(--t2);font-family:'JetBrains Mono',monospace;font-size:.8rem}
+.cc{color:var(--t2);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.oc{color:var(--t2);font-size:.84rem;font-weight:500}
+.dc{color:var(--t2);font-family:'JetBrains Mono',monospace;font-size:.76rem;white-space:nowrap}
+.ac{white-space:nowrap;text-align:right}
+.ac .btn{margin-left:.3rem}
+.cb{width:16px;height:16px;accent-color:var(--accent);cursor:pointer}
+
+/* Empty */
+.empty{text-align:center;padding:3.5rem 1rem;color:var(--t3)}
+.empty-icon{font-size:2.5rem;margin-bottom:.75rem;opacity:.25}
+
+/* Activity feed */
+.activity-panel{margin-top:1.5rem;background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.activity-header{display:flex;align-items:center;justify-content:space-between;padding:.9rem 1.25rem;border-bottom:1px solid var(--border);cursor:pointer;user-select:none}
+.activity-header:hover{background:var(--s2)}
+.activity-title{font-size:.88rem;font-weight:600;display:flex;align-items:center;gap:.55rem}
+.activity-title::before{content:"";width:3px;height:13px;background:var(--blue);border-radius:2px}
+.activity-toggle{color:var(--t3);font-size:.8rem;transition:transform .2s}
+.activity-toggle.open{transform:rotate(180deg)}
+.activity-body{padding:.75rem 1.25rem;display:none}
+.activity-body.open{display:block}
+.activity-item{display:grid;grid-template-columns:28px 1fr auto;gap:.65rem;align-items:start;padding:.65rem 0;border-bottom:1px solid var(--border)}
+.activity-item:last-child{border-bottom:none}
+.aicon{width:28px;height:28px;border-radius:50%;background:var(--s3);display:grid;place-items:center;font-size:.75rem;flex-shrink:0;margin-top:1px}
+.aicon.email{background:var(--bdim);color:var(--blue)}
+.aicon.add{background:var(--gdim);color:var(--green)}
+.aicon.del{background:var(--rdim);color:var(--red)}
+.aicon.other{background:var(--adim);color:var(--amber)}
+.aname{font-size:.83rem;font-weight:600}
+.adesc{font-size:.75rem;color:var(--t2);margin-top:2px}
+.atime{font-size:.7rem;color:var(--t3);font-family:'JetBrains Mono',monospace;white-space:nowrap}
+.activity-empty{color:var(--t3);font-size:.85rem;text-align:center;padding:2rem 0}
+
+/* Modals */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);z-index:100;display:none;align-items:center;justify-content:center;padding:1.5rem}
+.modal-backdrop.active{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:14px;width:100%;max-width:580px;max-height:90vh;overflow-y:auto;padding:1.5rem;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.modal-lg{max-width:660px}
+.modal-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.25rem}
+.modal-header h2{font-size:1.05rem;font-weight:700}
+.modal-header .msub{font-size:.78rem;color:var(--t2);margin-top:.2rem;font-family:'JetBrains Mono',monospace}
+.close-btn{background:none;border:none;color:var(--t2);font-size:1.5rem;cursor:pointer;line-height:1;padding:0}
+.close-btn:hover{color:var(--text)}
+.modal-footer{display:flex;gap:.6rem;justify-content:flex-end;margin-top:1.25rem}
+.modal-footer .btn-primary{width:auto;padding:.6rem 1.25rem}
+
+/* Templates */
+.tgrid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:1.1rem}
+.tcard{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:.65rem .85rem;cursor:pointer;transition:all .15s;text-align:left;color:var(--text);font-family:inherit}
+.tcard:hover{border-color:var(--border2);background:var(--s3)}
+.tcard.selected{border-color:var(--accent);background:var(--aglow)}
+.tname{font-weight:600;font-size:.83rem;margin-bottom:.15rem}
+.tdesc{font-size:.7rem;color:var(--t3)}
+
+/* Recipient chips */
+.rlist{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:.6rem .8rem;max-height:90px;overflow-y:auto;margin-bottom:1rem}
+.rchip{display:inline-flex;align-items:center;background:var(--s3);border:1px solid var(--border);border-radius:999px;padding:.15rem .55rem;margin:.2rem;font-size:.72rem;font-family:'JetBrains Mono',monospace}
+
+/* Help text */
+.help{font-size:.78rem;color:var(--t2);line-height:1.55;background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:.75rem .9rem;margin-bottom:1rem}
+.help code{font-family:'JetBrains Mono',monospace;background:var(--s3);padding:1px 6px;border-radius:4px;font-size:.75rem;color:var(--a2)}
+.help ol{margin:.5rem 0 0 1.1rem}
+.help li{margin:.2rem 0}
+
+/* Toast */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--s3);border:1px solid var(--border2);color:var(--text);padding:.7rem 1rem;border-radius:8px;font-size:.82rem;box-shadow:0 8px 24px rgba(0,0,0,.3);z-index:300;animation:slideIn .2s ease,fadeOut .3s ease 2.5s forwards;max-width:320px}
+.toast.success{border-color:var(--green)}
+.toast.error{border-color:var(--red)}
+
+@keyframes pulse{50%{opacity:.3}}
+@keyframes slideIn{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes fadeOut{to{opacity:0;transform:translateY(10px)}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<header class="header">
+  <div class="brand">
+    <div class="logo">M</div>
+    <div class="brand-text">
+      <h1>Miguel's better HubSpot</h1>
+      <div class="sub">Contact Relationship Manager</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="stats">
+      <div class="stat"><div class="stat-value" id="contact-count">0</div><div class="stat-label">Contacts</div></div>
+      <div class="stat"><div class="stat-value" id="email-count">0</div><div class="stat-label">Emails Sent</div></div>
+    </div>
+    <button class="btn btn-sm" id="refresh-btn">↻ Refresh</button>
+    <button class="sync-badge" id="sync-badge"><span class="dot"></span><span id="sync-label">Offline</span></button>
+  </div>
+</header>
+
+<div class="body-layout">
+
+  <aside class="panel">
+    <div class="panel-title">Add Contact</div>
+    <form id="contact-form">
+      <div class="field"><label>Name</label><input type="text" id="f-name" required placeholder="Jane Doe"></div>
+      <div class="field"><label>Email</label><input type="email" id="f-email" required placeholder="jane@example.com"></div>
+      <div class="field"><label>Phone</label><input type="tel" id="f-phone" placeholder="(555) 123-4567"></div>
+      <div class="field"><label>Owner</label><input type="text" id="f-owner" placeholder="Miguel"></div>
+      <div class="field"><label>Status</label>
+        <select id="f-status">
+          <option value="New">New</option><option value="Contacted">Contacted</option>
+          <option value="Engaged">Engaged</option><option value="Customer">Customer</option>
+          <option value="Lost">Lost</option>
+        </select>
+      </div>
+      <div class="field"><label>Comment</label><textarea id="f-comment" placeholder="Notes..."></textarea></div>
+      <button type="submit" class="btn btn-primary">+ Add Contact</button>
+    </form>
+  </aside>
+
+  <main class="panel">
+    <div class="panel-title">Contacts</div>
+
+    <div class="filter-pills" id="filter-pills">
+      <button class="pill active" data-filter="all">All</button>
+      <button class="pill" data-filter="New">New</button>
+      <button class="pill" data-filter="Contacted">Contacted</button>
+      <button class="pill" data-filter="Engaged">Engaged</button>
+      <button class="pill" data-filter="Customer">Customer</button>
+      <button class="pill" data-filter="Lost">Lost</button>
+    </div>
+
+    <div class="toolbar">
+      <input type="search" id="search" class="search" placeholder="Search contacts...">
+      <button class="btn btn-sm" id="export-btn">Export CSV</button>
+    </div>
+
+    <div class="bulk-bar" id="bulk-bar">
+      <span class="bulk-count"><strong id="bulk-num">0</strong> selected</span>
+      <button class="btn btn-sm" id="bulk-email-btn">Email Selected</button>
+      <button class="btn btn-sm btn-danger" id="bulk-delete-btn">Delete Selected</button>
+      <button class="btn btn-sm btn-ghost" id="bulk-clear-btn">Clear</button>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th><input type="checkbox" class="cb" id="select-all"></th>
+          <th>Name</th><th>Email</th><th>Phone</th>
+          <th>Status</th><th>Owner</th><th>Last Emailed</th><th>Comment</th><th></th>
+        </tr></thead>
+        <tbody id="contacts-body"></tbody>
+      </table>
+      <div class="empty" id="empty-state">
+        <div class="empty-icon">◎</div>
+        <div>No contacts yet. Add one to get started.</div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="activity-panel">
+  <div class="activity-header" id="activity-header">
+    <div class="activity-title">Activity Log</div>
+    <div style="display:flex;align-items:center;gap:.75rem">
+      <button class="btn btn-sm btn-ghost" id="activity-refresh-btn" onclick="event.stopPropagation()">↻</button>
+      <span class="activity-toggle" id="activity-toggle">▼</span>
+    </div>
+  </div>
+  <div class="activity-body" id="activity-body">
+    <div id="activity-list"><div class="activity-empty" id="activity-empty">Connect to Google Sheets to see activity.</div></div>
+  </div>
+</div>
+
+</div>
+
+<!-- Settings Modal -->
+<div class="modal-backdrop" id="settings-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div><h2>Google Sheets Sync</h2><div class="msub">Connect this CRM to your sheet</div></div>
+      <button class="close-btn" id="close-settings">&times;</button>
+    </div>
+    <div class="help">
+      Connected to <strong>Miguel's better HubSpot — Contacts</strong> Google Sheet.<br><br>
+      All contacts, emails, and activity are synced automatically. Click <strong>↻ Refresh</strong> in the header to pull the latest data.
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" id="connect-btn">↻ Sync Now</button>
+    </div>
+  </div>
+</div>
+
+<!-- Single Email Modal -->
+<div class="modal-backdrop" id="email-modal">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <div><h2>Send Email</h2><div class="msub" id="modal-recipient"></div></div>
+      <button class="close-btn" id="close-email">&times;</button>
+    </div>
+    <div class="field"><label>Choose a template</label><div class="tgrid" id="tgrid"></div></div>
+    <div class="field"><label>Subject</label><input type="text" id="email-subject"></div>
+    <div class="field"><label>Body</label><textarea id="email-body" style="min-height:160px"></textarea></div>
+    <div class="modal-footer">
+      <button class="btn" id="cancel-email">Cancel</button>
+      <button class="btn btn-primary" id="send-email-btn">Open in Email Client</button>
+    </div>
+  </div>
+</div>
+
+<!-- Bulk Email Modal -->
+<div class="modal-backdrop" id="bulk-email-modal">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <div><h2>Email Selected Contacts</h2><div class="msub" id="bulk-modal-sub"></div></div>
+      <button class="close-btn" id="close-bulk-email">&times;</button>
+    </div>
+    <div class="field"><label>Recipients</label><div class="rlist" id="rlist"></div></div>
+    <div class="field"><label>Choose a template</label><div class="tgrid" id="bulk-tgrid"></div></div>
+    <div class="field"><label>Subject</label><input type="text" id="bulk-subject"></div>
+    <div class="field"><label>Body</label><textarea id="bulk-body" style="min-height:160px"></textarea></div>
+    <div class="modal-footer">
+      <button class="btn" id="cancel-bulk-email">Cancel</button>
+      <button class="btn btn-primary" id="send-bulk-btn">Open in Email Client</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal-backdrop" id="edit-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div><h2>Edit Contact</h2><div class="msub" id="edit-sub"></div></div>
+      <button class="close-btn" id="close-edit">&times;</button>
+    </div>
+    <div class="field"><label>Name</label><input type="text" id="e-name"></div>
+    <div class="field"><label>Email</label><input type="email" id="e-email"></div>
+    <div class="field"><label>Phone</label><input type="tel" id="e-phone"></div>
+    <div class="field"><label>Owner</label><input type="text" id="e-owner"></div>
+    <div class="field"><label>Status</label>
+      <select id="e-status">
+        <option value="New">New</option><option value="Contacted">Contacted</option>
+        <option value="Engaged">Engaged</option><option value="Customer">Customer</option>
+        <option value="Lost">Lost</option>
+      </select>
+    </div>
+    <div class="field"><label>Comment</label><textarea id="e-comment"></textarea></div>
+    <div class="modal-footer">
+      <button class="btn" id="cancel-edit">Cancel</button>
+      <button class="btn btn-primary" id="save-edit-btn">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const DEFAULT_TEMPLATES = [
+  {id:"intro",name:"Introduction",desc:"First-time outreach",subject:"Great to connect, {{name}}",body:"Hi {{name}},\n\nIt was great connecting with you. I wanted to reach out and introduce myself — I'd love to learn more about what you're working on.\n\nWould you be open to a quick 15-minute call this week?\n\nBest,\nMiguel"},
+  {id:"followup",name:"Follow-up",desc:"Check in after no reply",subject:"Following up — {{name}}",body:"Hi {{name}},\n\nJust circling back on my last note. I know things get busy — if there's a better time to chat, just let me know.\n\nBest,\nMiguel"},
+  {id:"meeting",name:"Meeting Request",desc:"Propose a call",subject:"Quick chat next week?",body:"Hi {{name}},\n\nI'd love to set up a quick call. Do any of these times work?\n\n• Tuesday 10am\n• Wednesday 2pm\n• Thursday 11am\n\nHappy to adjust.\n\nBest,\nMiguel"},
+  {id:"thanks",name:"Thank You",desc:"Post-meeting follow-up",subject:"Thanks for your time, {{name}}",body:"Hi {{name}},\n\nThank you for the time today — I really enjoyed the conversation. I'll follow up shortly with next steps.\n\nBest,\nMiguel"},
+  {id:"proposal",name:"Proposal",desc:"Send proposal/pricing",subject:"Proposal for {{name}}",body:"Hi {{name}},\n\nAs promised, here's the proposal. Happy to jump on a call to walk through it together.\n\nBest,\nMiguel"},
+  {id:"checkin",name:"Check-in",desc:"Periodic touch",subject:"How are things going, {{name}}?",body:"Hi {{name}},\n\nJust checking in — no agenda, just wanted to stay in touch. Let me know if there's anything I can help with.\n\nBest,\nMiguel"}
+];
+
+const SK = "miguel-crm-v2";
+const TK = "miguel-crm-tpl-v1";
+const UK = "miguel-crm-url-v1";
+const AK = "miguel-crm-activity-open-v1";
+
+const SAMPLE_CONTACTS = [
+  {id:"sample1",name:"Sarah Chen",email:"sarah.chen@techcorp.io",phone:"(415) 823-4401",owner:"Miguel",comment:"Met at SaaStr — interested in enterprise plan. Follow up after Q2.",status:"Engaged",createdAt:"2026-04-10T14:22:00Z",lastEmailed:"2026-04-28T09:15:00Z",emailsSent:3},
+  {id:"sample2",name:"James Okafor",email:"james@growthlab.co",phone:"(646) 571-9902",owner:"Miguel",comment:"Referral from Sarah. Runs a 40-person team, evaluating tools.",status:"Contacted",createdAt:"2026-04-15T10:00:00Z",lastEmailed:"2026-04-22T11:30:00Z",emailsSent:1},
+  {id:"sample3",name:"Priya Nair",email:"priya.nair@venturescale.com",phone:"(512) 334-8810",owner:"Miguel",comment:"Demo call scheduled for May 5. Very warm lead.",status:"Engaged",createdAt:"2026-04-18T08:45:00Z",lastEmailed:"2026-04-30T16:00:00Z",emailsSent:2},
+  {id:"sample4",name:"Carlos Mendez",email:"c.mendez@solidworks.mx",phone:"+52 55 4122 9031",owner:"Miguel",comment:"Interested in the Pro tier. Needs Spanish language support.",status:"New",createdAt:"2026-04-29T13:10:00Z",lastEmailed:"",emailsSent:0},
+  {id:"sample5",name:"Taylor Brooks",email:"tbrooks@mktgagency.com",phone:"(213) 990-4477",owner:"Miguel",comment:"Agency owner. Could be a reseller partner opportunity.",status:"Customer",createdAt:"2026-03-01T09:00:00Z",lastEmailed:"2026-04-20T14:00:00Z",emailsSent:6},
+  {id:"sample6",name:"Mia Hoffmann",email:"mia.h@scalefund.de",phone:"+49 89 2109 4430",owner:"Miguel",comment:"Intro via LinkedIn. Based in Munich, exploring US expansion.",status:"New",createdAt:"2026-04-30T07:30:00Z",lastEmailed:"",emailsSent:0},
+  {id:"sample7",name:"Derek Pham",email:"derek@loopanalytics.com",phone:"(408) 761-2255",owner:"Miguel",comment:"Churned 6 months ago — came back inbound. High priority re-engage.",status:"Contacted",createdAt:"2026-04-25T11:20:00Z",lastEmailed:"2026-04-26T10:00:00Z",emailsSent:1},
+  {id:"sample8",name:"Aisha Williams",email:"aisha.w@brandhouse.co",phone:"(718) 450-6631",owner:"Miguel",comment:"No budget until July. Circle back then.",status:"Lost",createdAt:"2026-04-05T15:00:00Z",lastEmailed:"2026-04-12T09:00:00Z",emailsSent:2}
+];
+
+const _stored = JSON.parse(localStorage.getItem(SK) || "[]");
+const _storedIds = new Set(_stored.map(c => c.id));
+let contacts = [..._stored, ...SAMPLE_CONTACTS.filter(s => !_storedIds.has(s.id))];
+let templates = JSON.parse(localStorage.getItem(TK) || "null") || DEFAULT_TEMPLATES;
+const HARDCODED_URL = "https://script.google.com/macros/s/AKfycbxnmTdI6A9HK_B7CEgAtMC-9Bo0q5qALKB0F7Ns1XkA9rccuqh1YJqQikG5o6D1v8R4/exec";
+let webAppUrl = HARDCODED_URL;
+let activities   = [];
+let selectedIds  = new Set();
+let statusFilter = "all";
+let searchTerm   = "";
+let activeCid    = null;
+let activeTpl    = null;
+let bulkTpl      = null;
+let editingId    = null;
+let actOpen      = localStorage.getItem(AK) === "1";
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fill = (s,n) => s.replace(/\{\{name\}\}/g, n||"there");
+const relTime = iso => {
+  if(!iso) return "—";
+  const d = Date.now()-new Date(iso).getTime();
+  if(d<60000) return "just now";
+  if(d<3600000) return Math.floor(d/60000)+"m ago";
+  if(d<86400000) return Math.floor(d/3600000)+"h ago";
+  if(d<604800000) return Math.floor(d/86400000)+"d ago";
+  return new Date(iso).toLocaleDateString();
+};
+const sbadge = s => `<span class="sbadge s-${esc(s||"New")}">${esc(s||"New")}</span>`;
+const totalEmails = () => contacts.reduce((s,c)=>s+(c.emailsSent||0),0);
+
+function save() {
+  localStorage.setItem(SK, JSON.stringify(contacts));
+  localStorage.setItem(TK, JSON.stringify(templates));
+}
+
+function setSyncStatus(state, label) {
+  const b = $("sync-badge");
+  b.classList.remove("connected","syncing","error");
+  if(state) b.classList.add(state);
+  $("sync-label").textContent = label;
+}
+
+async function api(action, payload={}) {
+  if(!webAppUrl) throw new Error("Not connected");
+  const res = await fetch(webAppUrl,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action,...payload}),redirect:"follow"});
+  if(!res.ok) throw new Error("HTTP "+res.status);
+  const data = await res.json();
+  if(!data.ok) throw new Error(data.error||"Unknown error");
+  return data;
+}
+
+async function syncFromSheet() {
+  if(!webAppUrl) return;
+  setSyncStatus("syncing","Syncing");
+  try {
+    const data = await api("list");
+    const sheetContacts = data.contacts || [];
+    const sheetIds = new Set(sheetContacts.map(c => c.id));
+    const localOnly = contacts.filter(c => !sheetIds.has(c.id));
+    contacts = [...sheetContacts, ...localOnly];
+    if(data.templates&&data.templates.length) templates = data.templates;
+    save(); setSyncStatus("connected","Connected"); render();
+    showToast("Synced from Google Sheet","success");
+  } catch(err) {
+    setSyncStatus("error","Error");
+    showToast("Sync failed: "+err.message,"error");
+  }
+}
+
+async function loadActivity() {
+  if(!webAppUrl) return;
+  try {
+    const data = await api("listActivity",{limit:30});
+    activities = data.activities||[];
+    renderActivity();
+  } catch(_) {}
+}
+
+function openSettings() { $("settings-modal").classList.add("active"); }
+function closeSettings() { $("settings-modal").classList.remove("active"); }
+
+async function connect() {
+  closeSettings();
+  await syncFromSheet();
+  if($("sync-badge").classList.contains("connected")) loadActivity();
+}
+
+function render() {
+  $("contact-count").textContent = contacts.length;
+  $("email-count").textContent   = totalEmails();
+  let list = contacts;
+  if(statusFilter!=="all") list=list.filter(c=>(c.status||"New")===statusFilter);
+  if(searchTerm) {
+    const t=searchTerm.toLowerCase();
+    list=list.filter(c=>[c.name,c.email,c.phone,c.comment,c.owner,c.status].some(v=>(v||"").toLowerCase().includes(t)));
+  }
+  const body=$("contacts-body"), empty=$("empty-state");
+  if(!list.length){
+    body.innerHTML=""; empty.style.display="block";
+    empty.querySelector("div:last-child").textContent=contacts.length===0?"No contacts yet. Add one to get started.":"No contacts match your filter.";
+    updateBulkBar(); return;
+  }
+  empty.style.display="none";
+  body.innerHTML=list.map(c=>`
+    <tr data-id="${esc(c.id)}" class="${selectedIds.has(c.id)?'selected':''}">
+      <td><input type="checkbox" class="cb row-cb" data-id="${esc(c.id)}" ${selectedIds.has(c.id)?'checked':''}></td>
+      <td class="nc">${esc(c.name)}</td>
+      <td class="ec">${esc(c.email)}</td>
+      <td class="pc">${esc(c.phone||"—")}</td>
+      <td>${sbadge(c.status)}</td>
+      <td class="oc">${esc(c.owner||"—")}</td>
+      <td class="dc">${relTime(c.lastEmailed)}</td>
+      <td class="cc" title="${esc(c.comment)}">${esc(c.comment||"")}</td>
+      <td class="ac">
+        <button class="btn btn-sm" data-action="email" data-id="${esc(c.id)}">Email</button>
+        <button class="btn btn-sm" data-action="edit" data-id="${esc(c.id)}">Edit</button>
+        <button class="btn btn-sm btn-danger" data-action="delete" data-id="${esc(c.id)}">Del</button>
+      </td>
+    </tr>`).join("");
+  updateSelectAll(); updateBulkBar();
+}
+
+function renderActivity() {
+  const list=$("activity-list");
+  if(!activities.length){list.innerHTML='<div class="activity-empty">No activity yet.</div>';return;}
+  const icons={"Email Sent":{cls:"email",icon:"✉"},"Contact Added":{cls:"add",icon:"+"},"Contact Deleted":{cls:"del",icon:"×"}};
+  list.innerHTML=activities.map(a=>{
+    const {cls,icon}=icons[a.action]||{cls:"other",icon:"●"};
+    const tpl=a.templateUsed?` · <em>${esc(a.templateUsed)}</em>`:"";
+    return `<div class="activity-item">
+      <div class="aicon ${cls}">${icon}</div>
+      <div><div class="aname">${esc(a.contactName||"—")}</div><div class="adesc">${esc(a.action)}${tpl}</div></div>
+      <div class="atime">${relTime(a.timestamp)}</div>
+    </div>`;
+  }).join("");
+}
+
+async function addContact(c) {
+  const local={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),name:c.name.trim(),email:c.email.trim(),phone:(c.phone||"").trim(),owner:(c.owner||"").trim(),comment:(c.comment||"").trim(),status:c.status||"New",createdAt:new Date().toISOString(),lastEmailed:"",emailsSent:0};
+  contacts.unshift(local); save(); render();
+  if(webAppUrl){
+    try{const res=await api("addContact",{contact:local});const idx=contacts.findIndex(x=>x.id===local.id);if(idx>=0&&res.contact){contacts[idx]={...contacts[idx],...res.contact};save();render();}loadActivity();}
+    catch(err){showToast("Saved locally — sync failed","error");}
+  }
+}
+
+async function deleteContact(id) {
+  if(!confirm("Delete this contact?")) return;
+  contacts=contacts.filter(c=>c.id!==id); selectedIds.delete(id); save(); render();
+  if(webAppUrl){try{await api("deleteContact",{id});loadActivity();}catch(_){}}
+}
+
+async function bulkDelete() {
+  const ids=[...selectedIds];
+  if(!ids.length) return;
+  if(!confirm(`Delete ${ids.length} contact${ids.length>1?"s":""}?`)) return;
+  contacts=contacts.filter(c=>!selectedIds.has(c.id)); selectedIds.clear(); save(); render();
+  if(webAppUrl){for(const id of ids){try{await api("deleteContact",{id});}catch(_){}}loadActivity();}
+  showToast(`Deleted ${ids.length} contact${ids.length>1?"s":""}`, "success");
+}
+
+function openEditModal(id) {
+  const c=contacts.find(x=>x.id===id); if(!c) return;
+  editingId=id;
+  $("e-name").value=c.name||""; $("e-email").value=c.email||"";
+  $("e-phone").value=c.phone||""; $("e-owner").value=c.owner||"";
+  $("e-status").value=c.status||"New"; $("e-comment").value=c.comment||"";
+  $("edit-sub").textContent=c.email;
+  $("edit-modal").classList.add("active");
+}
+function closeEditModal(){$("edit-modal").classList.remove("active");editingId=null;}
+async function saveEdit() {
+  if(!editingId) return;
+  const fields={name:$("e-name").value.trim(),email:$("e-email").value.trim(),phone:$("e-phone").value.trim(),owner:$("e-owner").value.trim(),status:$("e-status").value,comment:$("e-comment").value.trim()};
+  if(!fields.name||!fields.email){showToast("Name and email required","error");return;}
+  const idx=contacts.findIndex(c=>c.id===editingId);
+  if(idx>=0) contacts[idx]={...contacts[idx],...fields};
+  save(); render(); closeEditModal(); showToast("Contact updated","success");
+  if(webAppUrl){try{await api("updateContact",{id:editingId,fields});}catch(_){}}
+}
+
+function renderTGrid(container, isBulk) {
+  const active=isBulk?bulkTpl:activeTpl;
+  container.innerHTML=templates.map(t=>`
+    <button class="tcard${active===t.id?' selected':''}" data-template="${esc(t.id)}" data-bulk="${isBulk?'1':'0'}">
+      <div class="tname">${esc(t.name)}</div><div class="tdesc">${esc(t.desc)}</div>
+    </button>`).join("");
+}
+
+function applyTpl(id, isBulk) {
+  const t=templates.find(x=>x.id===id); if(!t) return;
+  if(isBulk){
+    bulkTpl=id;
+    const sel=contacts.filter(c=>selectedIds.has(c.id));
+    const first=sel[0]?.name?.split(/\s+/)[0]||"there";
+    $("bulk-subject").value=fill(t.subject,first); $("bulk-body").value=fill(t.body,first);
+    renderTGrid($("bulk-tgrid"),true);
+  } else {
+    activeTpl=id;
+    const first=contacts.find(x=>x.id===activeCid)?.name?.split(/\s+/)[0]||"there";
+    $("email-subject").value=fill(t.subject,first); $("email-body").value=fill(t.body,first);
+    renderTGrid($("tgrid"),false);
+  }
+}
+
+function openEmailModal(id) {
+  const c=contacts.find(x=>x.id===id); if(!c) return;
+  activeCid=id; activeTpl=null;
+  $("modal-recipient").textContent=`To: ${c.name} <${c.email}>`;
+  $("email-subject").value=""; $("email-body").value="";
+  renderTGrid($("tgrid"),false);
+  $("email-modal").classList.add("active");
+}
+function closeEmailModal(){$("email-modal").classList.remove("active");activeCid=activeTpl=null;}
+
+async function sendEmail() {
+  const c=contacts.find(x=>x.id===activeCid); if(!c) return;
+  const subject=$("email-subject").value, body=$("email-body").value, tplId=activeTpl||"";
+  window.location.href=`mailto:${encodeURIComponent(c.email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  const idx=contacts.findIndex(x=>x.id===c.id);
+  if(idx>=0){contacts[idx].emailsSent=(contacts[idx].emailsSent||0)+1;contacts[idx].lastEmailed=new Date().toISOString();if(!contacts[idx].status||contacts[idx].status==="New")contacts[idx].status="Contacted";}
+  save(); render(); closeEmailModal(); showToast(`Email opened for ${c.name}`,"success");
+  if(webAppUrl){try{await api("recordEmailSent",{id:c.id,templateId:tplId});loadActivity();}catch(_){}}
+}
+
+function openBulkEmailModal() {
+  const sel=contacts.filter(c=>selectedIds.has(c.id)); if(!sel.length) return;
+  bulkTpl=null;
+  $("bulk-modal-sub").textContent=`${sel.length} recipient${sel.length>1?"s":""}`;
+  $("rlist").innerHTML=sel.map(c=>`<span class="rchip">${esc(c.name)} &lt;${esc(c.email)}&gt;</span>`).join("");
+  $("bulk-subject").value=""; $("bulk-body").value="";
+  renderTGrid($("bulk-tgrid"),true);
+  $("bulk-email-modal").classList.add("active");
+}
+function closeBulkEmailModal(){$("bulk-email-modal").classList.remove("active");bulkTpl=null;}
+
+async function sendBulkEmail() {
+  const sel=contacts.filter(c=>selectedIds.has(c.id)); if(!sel.length) return;
+  const subject=$("bulk-subject").value, body=$("bulk-body").value, tplId=bulkTpl||"";
+  window.location.href=`mailto:${encodeURIComponent(sel.map(c=>c.email).join(","))}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  const now=new Date().toISOString();
+  sel.forEach(c=>{const idx=contacts.findIndex(x=>x.id===c.id);if(idx>=0){contacts[idx].emailsSent=(contacts[idx].emailsSent||0)+1;contacts[idx].lastEmailed=now;if(!contacts[idx].status||contacts[idx].status==="New")contacts[idx].status="Contacted";}});
+  save(); render(); closeBulkEmailModal(); showToast(`Email opened for ${sel.length} contact${sel.length>1?"s":""}`, "success");
+  if(webAppUrl){for(const c of sel){try{await api("recordEmailSent",{id:c.id,templateId:tplId});}catch(_){}}loadActivity();}
+}
+
+function updateBulkBar(){const n=selectedIds.size;$("bulk-bar").classList.toggle("active",n>0);$("bulk-num").textContent=n;}
+function updateSelectAll(){
+  const cbs=[...$("contacts-body").querySelectorAll(".row-cb")].map(cb=>cb.dataset.id);
+  const all=cbs.length>0&&cbs.every(id=>selectedIds.has(id));
+  $("select-all").checked=all;
+  $("select-all").indeterminate=!all&&cbs.some(id=>selectedIds.has(id));
+}
+
+function exportCSV() {
+  if(!contacts.length){showToast("No contacts to export");return;}
+  const headers=["Name","Email","Phone","Status","Owner","Comment","Created At","Last Emailed","Emails Sent"];
+  const q=v=>{const s=String(v??"");return /[",\n]/.test(s)?`"${s.replace(/"/g,'""')}"`:`${s}`;};
+  const rows=contacts.map(c=>[c.name,c.email,c.phone,c.status,c.owner,c.comment,c.createdAt,c.lastEmailed,c.emailsSent].map(q).join(","));
+  const blob=new Blob([[headers.join(","),...rows].join("\n")],{type:"text/csv;charset=utf-8;"});
+  const a=Object.assign(document.createElement("a"),{href:URL.createObjectURL(blob),download:`contacts-${new Date().toISOString().slice(0,10)}.csv`});
+  a.click();
+}
+
+function showToast(msg,type="") {
+  const t=document.createElement("div");
+  t.className="toast"+(type?" "+type:""); t.textContent=msg;
+  document.body.appendChild(t); setTimeout(()=>t.remove(),3000);
+}
+
+// Event listeners
+$("contact-form").addEventListener("submit",async e=>{
+  e.preventDefault();
+  await addContact({name:$("f-name").value,email:$("f-email").value,phone:$("f-phone").value,owner:$("f-owner").value,status:$("f-status").value,comment:$("f-comment").value});
+  e.target.reset(); $("f-status").value="New"; showToast("Contact added","success");
+});
+$("contacts-body").addEventListener("click",e=>{
+  const btn=e.target.closest("button[data-action]"); if(!btn) return;
+  const id=btn.dataset.id;
+  if(btn.dataset.action==="email") openEmailModal(id);
+  if(btn.dataset.action==="edit")  openEditModal(id);
+  if(btn.dataset.action==="delete") deleteContact(id);
+});
+$("contacts-body").addEventListener("change",e=>{
+  if(!e.target.classList.contains("row-cb")) return;
+  const id=e.target.dataset.id;
+  e.target.checked?selectedIds.add(id):selectedIds.delete(id);
+  e.target.closest("tr")?.classList.toggle("selected",e.target.checked);
+  updateSelectAll(); updateBulkBar();
+});
+$("select-all").addEventListener("change",e=>{
+  $("contacts-body").querySelectorAll(".row-cb").forEach(cb=>{
+    cb.checked=e.target.checked;
+    e.target.checked?selectedIds.add(cb.dataset.id):selectedIds.delete(cb.dataset.id);
+    cb.closest("tr")?.classList.toggle("selected",e.target.checked);
+  });
+  updateBulkBar();
+});
+$("bulk-clear-btn").addEventListener("click",()=>{
+  selectedIds.clear();
+  $("contacts-body").querySelectorAll(".row-cb").forEach(cb=>{cb.checked=false;cb.closest("tr")?.classList.remove("selected");});
+  $("select-all").checked=false; updateBulkBar();
+});
+$("bulk-delete-btn").addEventListener("click",bulkDelete);
+$("bulk-email-btn").addEventListener("click",openBulkEmailModal);
+$("filter-pills").addEventListener("click",e=>{
+  const pill=e.target.closest(".pill"); if(!pill) return;
+  statusFilter=pill.dataset.filter;
+  document.querySelectorAll(".pill").forEach(p=>p.classList.remove("active"));
+  pill.classList.add("active"); render();
+});
+$("search").addEventListener("input",e=>{searchTerm=e.target.value;render();});
+$("export-btn").addEventListener("click",exportCSV);
+$("refresh-btn").addEventListener("click",async()=>{await syncFromSheet();loadActivity();});
+$("sync-badge").addEventListener("click",openSettings);
+$("close-settings").addEventListener("click",closeSettings);
+$("connect-btn").addEventListener("click",connect);
+$("settings-modal").addEventListener("click",e=>{if(e.target===$("settings-modal"))closeSettings();});
+$("close-email").addEventListener("click",closeEmailModal);
+$("cancel-email").addEventListener("click",closeEmailModal);
+$("send-email-btn").addEventListener("click",sendEmail);
+$("email-modal").addEventListener("click",e=>{if(e.target===$("email-modal"))closeEmailModal();});
+$("close-bulk-email").addEventListener("click",closeBulkEmailModal);
+$("cancel-bulk-email").addEventListener("click",closeBulkEmailModal);
+$("send-bulk-btn").addEventListener("click",sendBulkEmail);
+$("bulk-email-modal").addEventListener("click",e=>{if(e.target===$("bulk-email-modal"))closeBulkEmailModal();});
+$("close-edit").addEventListener("click",closeEditModal);
+$("cancel-edit").addEventListener("click",closeEditModal);
+$("save-edit-btn").addEventListener("click",saveEdit);
+$("edit-modal").addEventListener("click",e=>{if(e.target===$("edit-modal"))closeEditModal();});
+$("activity-header").addEventListener("click",()=>{
+  actOpen=!actOpen; localStorage.setItem(AK,actOpen?"1":"0");
+  $("activity-body").classList.toggle("open",actOpen);
+  $("activity-toggle").classList.toggle("open",actOpen);
+  if(actOpen&&!activities.length&&webAppUrl) loadActivity();
+});
+$("activity-refresh-btn").addEventListener("click",e=>{e.stopPropagation();loadActivity();});
+document.addEventListener("click",e=>{
+  const card=e.target.closest(".tcard[data-template]"); if(!card) return;
+  applyTpl(card.dataset.template,card.dataset.bulk==="1");
+});
+document.addEventListener("keydown",e=>{
+  if(e.key!=="Escape") return;
+  closeSettings();closeEmailModal();closeBulkEmailModal();closeEditModal();
+});
+
+// Init
+if(actOpen){$("activity-body").classList.add("open");$("activity-toggle").classList.add("open");}
+render();
+if(webAppUrl){setSyncStatus("syncing","Syncing");syncFromSheet().then(()=>{if(actOpen)loadActivity();});}
+else{setSyncStatus(null,"Offline");}
+</script>
+</body>
+</html>
