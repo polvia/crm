@@ -99,6 +99,13 @@ html,body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;
 .pill:hover{border-color:var(--border2);color:var(--text);background:var(--s3)}
 .pill.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
 
+/* Filter dropdowns (HubSpot-style row) */
+.filter-row{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;margin-bottom:.9rem}
+.filter-select{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:.42rem 2rem .42rem .75rem;border-radius:6px;font-family:inherit;font-size:.82rem;font-weight:500;cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23516f90' stroke-width='2' stroke-linecap='round'><polyline points='6 9 12 15 18 9'/></svg>");background-repeat:no-repeat;background-position:right .55rem center;background-size:14px}
+.filter-select:hover{border-color:var(--blue);color:var(--blue)}
+.filter-select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px var(--bdim)}
+.filter-select.has-value{color:var(--blue);border-color:var(--bdim);background-color:var(--bdim)}
+
 /* Status badges */
 .sbadge{display:inline-flex;align-items:center;gap:.3rem;padding:.2rem .55rem;border-radius:999px;font-size:.72rem;font-weight:600;white-space:nowrap}
 .sbadge::before{content:"";width:5px;height:5px;border-radius:50%}
@@ -313,13 +320,25 @@ tbody tr.selected{background:rgba(255,107,53,.07);border-left:2px solid var(--ac
       <button class="btn btn-primary btn-inline" id="open-add-btn">+ Add Contact</button>
     </div>
 
-    <div class="filter-pills" id="filter-pills">
-      <button class="pill active" data-filter="all">All</button>
-      <button class="pill" data-filter="New">New</button>
-      <button class="pill" data-filter="Contacted">Contacted</button>
-      <button class="pill" data-filter="Engaged">Engaged</button>
-      <button class="pill" data-filter="Customer">Customer</button>
-      <button class="pill" data-filter="Lost">Lost</button>
+    <div class="filter-row">
+      <select class="filter-select" id="filter-status">
+        <option value="all">All statuses</option>
+        <option value="New">Status: New</option>
+        <option value="Contacted">Status: Contacted</option>
+        <option value="Engaged">Status: Engaged</option>
+        <option value="Customer">Status: Customer</option>
+        <option value="Lost">Status: Lost</option>
+      </select>
+      <select class="filter-select" id="filter-owner">
+        <option value="all">All owners</option>
+      </select>
+      <select class="filter-select" id="filter-last-email">
+        <option value="all">Last email: any</option>
+        <option value="7d">Last email: ≤ 7 days</option>
+        <option value="30d">Last email: ≤ 30 days</option>
+        <option value="90d">Last email: ≤ 90 days</option>
+        <option value="never">Never emailed</option>
+      </select>
     </div>
 
     <div class="toolbar">
@@ -616,6 +635,8 @@ const fromDbActivity = a => ({
 });
 let selectedIds  = new Set();
 let statusFilter = "all";
+let ownerFilter  = "all";
+let lastEmailFilter = "all";
 let searchTerm   = "";
 let activeCid    = null;
 let activeTpl    = null;
@@ -711,12 +732,33 @@ async function loadActivity() {
   } catch(_) {}
 }
 
+function populateOwnerFilter() {
+  const sel = $("filter-owner"); if(!sel) return;
+  const cur = sel.value || ownerFilter;
+  const owners = [...new Set(contacts.map(c => (c.owner||"").trim()).filter(Boolean))].sort();
+  sel.innerHTML = '<option value="all">All owners</option>'
+    + owners.map(o => `<option value="${esc(o)}">Owner: ${esc(o)}</option>`).join("");
+  sel.value = (cur === "all" || owners.includes(cur)) ? cur : "all";
+  ownerFilter = sel.value;
+}
+
 function render() {
   $("contact-count").textContent = contacts.length;
   $("email-count").textContent   = totalEmails();
   if($("tab-contacts-count")) updateTabCounts();
+  populateOwnerFilter();
   let list = contacts;
   if(statusFilter!=="all") list=list.filter(c=>(c.status||"New")===statusFilter);
+  if(ownerFilter!=="all")  list=list.filter(c=>(c.owner||"")===ownerFilter);
+  if(lastEmailFilter!=="all"){
+    if(lastEmailFilter==="never"){
+      list=list.filter(c=>!c.lastEmailed);
+    } else {
+      const days={"7d":7,"30d":30,"90d":90}[lastEmailFilter];
+      const cutoff=Date.now()-days*86400000;
+      list=list.filter(c=>c.lastEmailed && new Date(c.lastEmailed).getTime()>=cutoff);
+    }
+  }
   if(searchTerm) {
     const t=searchTerm.toLowerCase();
     list=list.filter(c=>[c.name,c.email,c.phone,c.comment,c.owner,c.status].some(v=>(v||"").toLowerCase().includes(t)));
@@ -983,12 +1025,10 @@ $("bulk-clear-btn").addEventListener("click",()=>{
 });
 $("bulk-delete-btn").addEventListener("click",bulkDelete);
 $("bulk-email-btn").addEventListener("click",openBulkEmailModal);
-$("filter-pills").addEventListener("click",e=>{
-  const pill=e.target.closest(".pill"); if(!pill) return;
-  statusFilter=pill.dataset.filter;
-  document.querySelectorAll(".pill").forEach(p=>p.classList.remove("active"));
-  pill.classList.add("active"); render();
-});
+function markFilterStyle(sel){ sel.classList.toggle("has-value", sel.value !== "all"); }
+$("filter-status").addEventListener("change", e => { statusFilter=e.target.value; markFilterStyle(e.target); render(); });
+$("filter-owner").addEventListener("change",  e => { ownerFilter=e.target.value;  markFilterStyle(e.target); render(); });
+$("filter-last-email").addEventListener("change", e => { lastEmailFilter=e.target.value; markFilterStyle(e.target); render(); });
 $("search").addEventListener("input",e=>{searchTerm=e.target.value;render();});
 $("export-btn").addEventListener("click",exportCSV);
 $("close-email").addEventListener("click",closeEmailModal);
