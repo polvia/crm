@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Miguel's better HubSpot</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root {
   --bg:#0d0f17; --surface:#161922; --s2:#1e2230; --s3:#252a3a;
@@ -274,7 +275,7 @@ tbody tr.selected{background:rgba(255,107,53,.07);border-left:2px solid var(--ac
     </div>
   </div>
   <div class="activity-body" id="activity-body">
-    <div id="activity-list"><div class="activity-empty" id="activity-empty">Connect to Google Sheets to see activity.</div></div>
+    <div id="activity-list"><div class="activity-empty" id="activity-empty">No activity yet.</div></div>
   </div>
 </div>
 
@@ -284,12 +285,12 @@ tbody tr.selected{background:rgba(255,107,53,.07);border-left:2px solid var(--ac
 <div class="modal-backdrop" id="settings-modal">
   <div class="modal">
     <div class="modal-header">
-      <div><h2>Google Sheets Sync</h2><div class="msub">Connect this CRM to your sheet</div></div>
+      <div><h2>Sync</h2><div class="msub">Backed by Supabase</div></div>
       <button class="close-btn" id="close-settings">&times;</button>
     </div>
     <div class="help">
-      Connected to <strong>Miguel's better HubSpot — Contacts</strong> Google Sheet.<br><br>
-      All contacts, emails, and activity are synced automatically. Click <strong>↻ Refresh</strong> in the header to pull the latest data.
+      All contacts, emails, and activity are synced automatically to your Supabase project.<br><br>
+      Click <strong>↻ Refresh</strong> in the header to pull the latest data.
     </div>
     <div class="modal-footer">
       <button class="btn btn-primary" id="connect-btn">↻ Sync Now</button>
@@ -368,29 +369,37 @@ const DEFAULT_TEMPLATES = [
   {id:"checkin",name:"Check-in",desc:"Periodic touch",subject:"How are things going, {{name}}?",body:"Hi {{name}},\n\nJust checking in — no agenda, just wanted to stay in touch. Let me know if there's anything I can help with.\n\nBest,\nMiguel"}
 ];
 
+const SUPABASE_URL = "https://iobidqgcaezghdhgvwgr.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlvYmlkcWdjYWV6Z2hkaGd2d2dyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1OTczNTksImV4cCI6MjA5MzE3MzM1OX0.G_yDQmQmgyPcH8k9VAwxCYw5LHD00puEnF6ALDRPFoc";
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 const SK = "miguel-crm-v2";
 const TK = "miguel-crm-tpl-v1";
-const UK = "miguel-crm-url-v1";
 const AK = "miguel-crm-activity-open-v1";
 
-const SAMPLE_CONTACTS = [
-  {id:"sample1",name:"Sarah Chen",email:"sarah.chen@techcorp.io",phone:"(415) 823-4401",owner:"Miguel",comment:"Met at SaaStr — interested in enterprise plan. Follow up after Q2.",status:"Engaged",createdAt:"2026-04-10T14:22:00Z",lastEmailed:"2026-04-28T09:15:00Z",emailsSent:3},
-  {id:"sample2",name:"James Okafor",email:"james@growthlab.co",phone:"(646) 571-9902",owner:"Miguel",comment:"Referral from Sarah. Runs a 40-person team, evaluating tools.",status:"Contacted",createdAt:"2026-04-15T10:00:00Z",lastEmailed:"2026-04-22T11:30:00Z",emailsSent:1},
-  {id:"sample3",name:"Priya Nair",email:"priya.nair@venturescale.com",phone:"(512) 334-8810",owner:"Miguel",comment:"Demo call scheduled for May 5. Very warm lead.",status:"Engaged",createdAt:"2026-04-18T08:45:00Z",lastEmailed:"2026-04-30T16:00:00Z",emailsSent:2},
-  {id:"sample4",name:"Carlos Mendez",email:"c.mendez@solidworks.mx",phone:"+52 55 4122 9031",owner:"Miguel",comment:"Interested in the Pro tier. Needs Spanish language support.",status:"New",createdAt:"2026-04-29T13:10:00Z",lastEmailed:"",emailsSent:0},
-  {id:"sample5",name:"Taylor Brooks",email:"tbrooks@mktgagency.com",phone:"(213) 990-4477",owner:"Miguel",comment:"Agency owner. Could be a reseller partner opportunity.",status:"Customer",createdAt:"2026-03-01T09:00:00Z",lastEmailed:"2026-04-20T14:00:00Z",emailsSent:6},
-  {id:"sample6",name:"Mia Hoffmann",email:"mia.h@scalefund.de",phone:"+49 89 2109 4430",owner:"Miguel",comment:"Intro via LinkedIn. Based in Munich, exploring US expansion.",status:"New",createdAt:"2026-04-30T07:30:00Z",lastEmailed:"",emailsSent:0},
-  {id:"sample7",name:"Derek Pham",email:"derek@loopanalytics.com",phone:"(408) 761-2255",owner:"Miguel",comment:"Churned 6 months ago — came back inbound. High priority re-engage.",status:"Contacted",createdAt:"2026-04-25T11:20:00Z",lastEmailed:"2026-04-26T10:00:00Z",emailsSent:1},
-  {id:"sample8",name:"Aisha Williams",email:"aisha.w@brandhouse.co",phone:"(718) 450-6631",owner:"Miguel",comment:"No budget until July. Circle back then.",status:"Lost",createdAt:"2026-04-05T15:00:00Z",lastEmailed:"2026-04-12T09:00:00Z",emailsSent:2}
-];
-
-const _stored = JSON.parse(localStorage.getItem(SK) || "[]");
-const _storedIds = new Set(_stored.map(c => c.id));
-let contacts = [..._stored, ...SAMPLE_CONTACTS.filter(s => !_storedIds.has(s.id))];
+let contacts = JSON.parse(localStorage.getItem(SK) || "[]");
 let templates = JSON.parse(localStorage.getItem(TK) || "null") || DEFAULT_TEMPLATES;
-const HARDCODED_URL = "https://script.google.com/macros/s/AKfycbxnmTdI6A9HK_B7CEgAtMC-9Bo0q5qALKB0F7Ns1XkA9rccuqh1YJqQikG5o6D1v8R4/exec";
-let webAppUrl = HARDCODED_URL;
 let activities   = [];
+
+// snake_case (DB) <-> camelCase (app) mappers
+const fromDb = r => ({
+  id:r.id, name:r.name, email:r.email,
+  phone:r.phone||"", owner:r.owner||"", comment:r.comment||"",
+  status:r.status||"New",
+  createdAt:r.created_at, lastEmailed:r.last_emailed||"",
+  emailsSent:r.emails_sent||0
+});
+const toDb = c => ({
+  id:c.id, name:c.name, email:c.email,
+  phone:c.phone||null, owner:c.owner||null, comment:c.comment||null,
+  status:c.status||"New",
+  created_at:c.createdAt, last_emailed:c.lastEmailed||null,
+  emails_sent:c.emailsSent||0
+});
+const fromDbActivity = a => ({
+  contactId:a.contact_id, contactName:a.contact_name,
+  action:a.action, templateUsed:a.template_used, timestamp:a.timestamp
+});
 let selectedIds  = new Set();
 let statusFilter = "all";
 let searchTerm   = "";
@@ -427,27 +436,13 @@ function setSyncStatus(state, label) {
   $("sync-label").textContent = label;
 }
 
-async function api(action, payload={}) {
-  if(!webAppUrl) throw new Error("Not connected");
-  const res = await fetch(webAppUrl,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action,...payload}),redirect:"follow"});
-  if(!res.ok) throw new Error("HTTP "+res.status);
-  const data = await res.json();
-  if(!data.ok) throw new Error(data.error||"Unknown error");
-  return data;
-}
-
-async function syncFromSheet() {
-  if(!webAppUrl) return;
+async function syncFromSupabase() {
   setSyncStatus("syncing","Syncing");
   try {
-    const data = await api("list");
-    const sheetContacts = data.contacts || [];
-    const sheetIds = new Set(sheetContacts.map(c => c.id));
-    const localOnly = contacts.filter(c => !sheetIds.has(c.id));
-    contacts = [...sheetContacts, ...localOnly];
-    if(data.templates&&data.templates.length) templates = data.templates;
+    const {data,error} = await sb.from("contacts").select("*").order("created_at",{ascending:false});
+    if(error) throw error;
+    contacts = data.map(fromDb);
     save(); setSyncStatus("connected","Connected"); render();
-    showToast("Synced from Google Sheet","success");
   } catch(err) {
     setSyncStatus("error","Error");
     showToast("Sync failed: "+err.message,"error");
@@ -455,10 +450,10 @@ async function syncFromSheet() {
 }
 
 async function loadActivity() {
-  if(!webAppUrl) return;
   try {
-    const data = await api("listActivity",{limit:30});
-    activities = data.activities||[];
+    const {data,error} = await sb.from("activities").select("*").order("timestamp",{ascending:false}).limit(30);
+    if(error) throw error;
+    activities = data.map(fromDbActivity);
     renderActivity();
   } catch(_) {}
 }
@@ -468,7 +463,7 @@ function closeSettings() { $("settings-modal").classList.remove("active"); }
 
 async function connect() {
   closeSettings();
-  await syncFromSheet();
+  await syncFromSupabase();
   if($("sync-badge").classList.contains("connected")) loadActivity();
 }
 
@@ -525,24 +520,38 @@ function renderActivity() {
 async function addContact(c) {
   const local={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),name:c.name.trim(),email:c.email.trim(),phone:(c.phone||"").trim(),owner:(c.owner||"").trim(),comment:(c.comment||"").trim(),status:c.status||"New",createdAt:new Date().toISOString(),lastEmailed:"",emailsSent:0};
   contacts.unshift(local); save(); render();
-  if(webAppUrl){
-    try{const res=await api("addContact",{contact:local});const idx=contacts.findIndex(x=>x.id===local.id);if(idx>=0&&res.contact){contacts[idx]={...contacts[idx],...res.contact};save();render();}loadActivity();}
-    catch(err){showToast("Saved locally — sync failed","error");}
+  try {
+    const {error} = await sb.from("contacts").insert(toDb(local));
+    if(error) throw error;
+    await sb.from("activities").insert({contact_id:local.id,contact_name:local.name,action:"Contact Added"});
+    loadActivity();
+  } catch(err) {
+    showToast("Saved locally — sync failed: "+err.message,"error");
   }
 }
 
 async function deleteContact(id) {
   if(!confirm("Delete this contact?")) return;
-  contacts=contacts.filter(c=>c.id!==id); selectedIds.delete(id); save(); render();
-  if(webAppUrl){try{await api("deleteContact",{id});loadActivity();}catch(_){}}
+  const c=contacts.find(x=>x.id===id);
+  contacts=contacts.filter(x=>x.id!==id); selectedIds.delete(id); save(); render();
+  try {
+    if(c) await sb.from("activities").insert({contact_id:id,contact_name:c.name,action:"Contact Deleted"});
+    await sb.from("contacts").delete().eq("id",id);
+    loadActivity();
+  } catch(_) {}
 }
 
 async function bulkDelete() {
   const ids=[...selectedIds];
   if(!ids.length) return;
   if(!confirm(`Delete ${ids.length} contact${ids.length>1?"s":""}?`)) return;
+  const deleted=contacts.filter(c=>selectedIds.has(c.id));
   contacts=contacts.filter(c=>!selectedIds.has(c.id)); selectedIds.clear(); save(); render();
-  if(webAppUrl){for(const id of ids){try{await api("deleteContact",{id});}catch(_){}}loadActivity();}
+  try {
+    if(deleted.length) await sb.from("activities").insert(deleted.map(c=>({contact_id:c.id,contact_name:c.name,action:"Contact Deleted"})));
+    await sb.from("contacts").delete().in("id",ids);
+    loadActivity();
+  } catch(_) {}
   showToast(`Deleted ${ids.length} contact${ids.length>1?"s":""}`, "success");
 }
 
@@ -563,7 +572,13 @@ async function saveEdit() {
   const idx=contacts.findIndex(c=>c.id===editingId);
   if(idx>=0) contacts[idx]={...contacts[idx],...fields};
   save(); render(); closeEditModal(); showToast("Contact updated","success");
-  if(webAppUrl){try{await api("updateContact",{id:editingId,fields});}catch(_){}}
+  try {
+    await sb.from("contacts").update({
+      name:fields.name, email:fields.email,
+      phone:fields.phone||null, owner:fields.owner||null,
+      status:fields.status, comment:fields.comment||null
+    }).eq("id",editingId);
+  } catch(_) {}
 }
 
 function renderTGrid(container, isBulk) {
@@ -605,9 +620,19 @@ async function sendEmail() {
   const subject=$("email-subject").value, body=$("email-body").value, tplId=activeTpl||"";
   window.location.href=`mailto:${encodeURIComponent(c.email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   const idx=contacts.findIndex(x=>x.id===c.id);
-  if(idx>=0){contacts[idx].emailsSent=(contacts[idx].emailsSent||0)+1;contacts[idx].lastEmailed=new Date().toISOString();if(!contacts[idx].status||contacts[idx].status==="New")contacts[idx].status="Contacted";}
+  const now=new Date().toISOString();
+  if(idx>=0){contacts[idx].emailsSent=(contacts[idx].emailsSent||0)+1;contacts[idx].lastEmailed=now;if(!contacts[idx].status||contacts[idx].status==="New")contacts[idx].status="Contacted";}
   save(); render(); closeEmailModal(); showToast(`Email opened for ${c.name}`,"success");
-  if(webAppUrl){try{await api("recordEmailSent",{id:c.id,templateId:tplId});loadActivity();}catch(_){}}
+  try {
+    if(idx>=0) await sb.from("contacts").update({
+      emails_sent:contacts[idx].emailsSent,
+      last_emailed:now,
+      status:contacts[idx].status
+    }).eq("id",c.id);
+    const tplName=templates.find(t=>t.id===tplId)?.name||"";
+    await sb.from("activities").insert({contact_id:c.id,contact_name:c.name,action:"Email Sent",template_used:tplName});
+    loadActivity();
+  } catch(_) {}
 }
 
 function openBulkEmailModal() {
@@ -628,7 +653,19 @@ async function sendBulkEmail() {
   const now=new Date().toISOString();
   sel.forEach(c=>{const idx=contacts.findIndex(x=>x.id===c.id);if(idx>=0){contacts[idx].emailsSent=(contacts[idx].emailsSent||0)+1;contacts[idx].lastEmailed=now;if(!contacts[idx].status||contacts[idx].status==="New")contacts[idx].status="Contacted";}});
   save(); render(); closeBulkEmailModal(); showToast(`Email opened for ${sel.length} contact${sel.length>1?"s":""}`, "success");
-  if(webAppUrl){for(const c of sel){try{await api("recordEmailSent",{id:c.id,templateId:tplId});}catch(_){}}loadActivity();}
+  try {
+    const tplName=templates.find(t=>t.id===tplId)?.name||"";
+    for(const c of sel){
+      const idx=contacts.findIndex(x=>x.id===c.id);
+      if(idx>=0) await sb.from("contacts").update({
+        emails_sent:contacts[idx].emailsSent,
+        last_emailed:now,
+        status:contacts[idx].status
+      }).eq("id",c.id);
+    }
+    await sb.from("activities").insert(sel.map(c=>({contact_id:c.id,contact_name:c.name,action:"Email Sent",template_used:tplName})));
+    loadActivity();
+  } catch(_) {}
 }
 
 function updateBulkBar(){const n=selectedIds.size;$("bulk-bar").classList.toggle("active",n>0);$("bulk-num").textContent=n;}
@@ -698,7 +735,7 @@ $("filter-pills").addEventListener("click",e=>{
 });
 $("search").addEventListener("input",e=>{searchTerm=e.target.value;render();});
 $("export-btn").addEventListener("click",exportCSV);
-$("refresh-btn").addEventListener("click",async()=>{await syncFromSheet();loadActivity();});
+$("refresh-btn").addEventListener("click",async()=>{await syncFromSupabase();loadActivity();});
 $("sync-badge").addEventListener("click",openSettings);
 $("close-settings").addEventListener("click",closeSettings);
 $("connect-btn").addEventListener("click",connect);
@@ -719,7 +756,7 @@ $("activity-header").addEventListener("click",()=>{
   actOpen=!actOpen; localStorage.setItem(AK,actOpen?"1":"0");
   $("activity-body").classList.toggle("open",actOpen);
   $("activity-toggle").classList.toggle("open",actOpen);
-  if(actOpen&&!activities.length&&webAppUrl) loadActivity();
+  if(actOpen&&!activities.length) loadActivity();
 });
 $("activity-refresh-btn").addEventListener("click",e=>{e.stopPropagation();loadActivity();});
 document.addEventListener("click",e=>{
@@ -734,8 +771,7 @@ document.addEventListener("keydown",e=>{
 // Init
 if(actOpen){$("activity-body").classList.add("open");$("activity-toggle").classList.add("open");}
 render();
-if(webAppUrl){setSyncStatus("syncing","Syncing");syncFromSheet().then(()=>{if(actOpen)loadActivity();});}
-else{setSyncStatus(null,"Offline");}
+syncFromSupabase().then(()=>{if(actOpen)loadActivity();});
 </script>
 </body>
 </html>
