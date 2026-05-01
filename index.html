@@ -141,6 +141,15 @@ tbody tr.selected{background:rgba(255,107,53,.07);border-left:2px solid var(--ac
 .avatar{width:32px;height:32px;border-radius:50%;background:var(--s3);color:var(--t2);display:inline-grid;place-items:center;font-size:.72rem;font-weight:700;font-family:'JetBrains Mono',monospace;flex-shrink:0;border:1px solid var(--border);text-transform:uppercase;letter-spacing:.02em}
 .name-link{color:var(--blue);font-weight:600;cursor:pointer;text-decoration:none}
 .name-link:hover{text-decoration:underline}
+
+/* Contact email history (in Edit modal) */
+.emails-list{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:.4rem;max-height:200px;overflow-y:auto}
+.email-item{display:flex;align-items:center;gap:.65rem;padding:.55rem .55rem;border-bottom:1px solid var(--border)}
+.email-item:last-child{border-bottom:none}
+.email-icon{width:28px;height:28px;border-radius:50%;background:var(--bdim);color:var(--blue);display:grid;place-items:center;font-size:.85rem;flex-shrink:0}
+.email-meta{flex:1;display:flex;justify-content:space-between;align-items:center;gap:.5rem;min-width:0}
+.email-template{font-size:.82rem;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.email-time{font-size:.72rem;color:var(--t3);font-family:'JetBrains Mono',monospace;white-space:nowrap}
 .ec,.pc{color:var(--t2);font-family:'JetBrains Mono',monospace;font-size:.8rem}
 .cc{color:var(--t2);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .oc{color:var(--t2);font-size:.84rem;font-weight:500}
@@ -511,6 +520,9 @@ tbody tr.selected{background:rgba(255,107,53,.07);border-left:2px solid var(--ac
       </select>
     </div>
     <div class="field"><label>Comment</label><textarea id="e-comment"></textarea></div>
+    <div class="field"><label>Email History</label>
+      <div id="contact-emails-list" class="emails-list"><div class="activity-empty">Loading…</div></div>
+    </div>
     <div class="modal-footer">
       <button class="btn" id="cancel-edit">Cancel</button>
       <button class="btn btn-primary" id="save-edit-btn">Save Changes</button>
@@ -849,6 +861,30 @@ async function bulkDelete() {
   showToast(`Deleted ${ids.length} contact${ids.length>1?"s":""}`, "success");
 }
 
+async function loadContactEmails(contactId) {
+  const container=$("contact-emails-list");
+  container.innerHTML='<div class="activity-empty">Loading…</div>';
+  try {
+    const {data,error}=await sb.from("activities")
+      .select("template_used,timestamp")
+      .eq("contact_id",contactId)
+      .eq("action","Email Sent")
+      .order("timestamp",{ascending:false});
+    if(error) throw error;
+    if(!data.length){ container.innerHTML='<div class="activity-empty">No emails sent yet.</div>'; return; }
+    container.innerHTML=data.map(a=>`
+      <div class="email-item">
+        <div class="email-icon">✉</div>
+        <div class="email-meta">
+          <div class="email-template">${esc(a.template_used||"Custom email")}</div>
+          <div class="email-time">${relTime(a.timestamp)}</div>
+        </div>
+      </div>`).join("");
+  } catch(err) {
+    container.innerHTML=`<div class="activity-empty">Failed to load: ${esc(err.message)}</div>`;
+  }
+}
+
 function openEditModal(id) {
   const c=contacts.find(x=>x.id===id); if(!c) return;
   editingId=id;
@@ -858,6 +894,7 @@ function openEditModal(id) {
   $("e-status").value=c.status||"New"; $("e-comment").value=c.comment||"";
   $("edit-sub").textContent=c.email;
   $("edit-modal").classList.add("active");
+  loadContactEmails(id);
 }
 function closeEditModal(){$("edit-modal").classList.remove("active");editingId=null;}
 async function saveEdit() {
