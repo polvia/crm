@@ -132,6 +132,10 @@ html,body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;
 .table-wrap{overflow-x:auto;border-radius:8px}
 table{width:100%;border-collapse:collapse;min-width:700px}
 thead th{text-align:left;font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:var(--t2);font-weight:700;padding:.75rem .7rem;border-bottom:2px solid var(--border2);font-family:'JetBrains Mono',monospace;white-space:nowrap;background:var(--s2)}
+thead th.sortable{cursor:pointer;user-select:none;transition:color .15s}
+thead th.sortable:hover{color:var(--blue)}
+thead th.sortable.sorted{color:var(--blue)}
+thead th .arrow{display:inline-block;margin-left:.3rem;font-size:.85rem;opacity:.7;width:.7em}
 thead th:first-child{width:36px}
 tbody td{padding:.8rem .7rem;border-bottom:1px solid var(--border);font-size:.86rem;vertical-align:middle}
 tbody tr:hover{background:var(--s2)}
@@ -367,10 +371,15 @@ tbody tr.selected{background:rgba(255,107,53,.07);border-left:2px solid var(--ac
 
     <div class="table-wrap">
       <table>
-        <thead><tr>
+        <thead><tr id="contacts-thead">
           <th><input type="checkbox" class="cb" id="select-all"></th>
-          <th>Name</th><th>Email</th><th>Phone</th>
-          <th>Status</th><th>Owner</th><th>Last Emailed</th><th>Comment</th><th></th>
+          <th class="sortable" data-sort="name">Name<span class="arrow"></span></th>
+          <th class="sortable" data-sort="email">Email<span class="arrow"></span></th>
+          <th class="sortable" data-sort="phone">Phone<span class="arrow"></span></th>
+          <th class="sortable" data-sort="status">Status<span class="arrow"></span></th>
+          <th class="sortable" data-sort="owner">Owner<span class="arrow"></span></th>
+          <th class="sortable" data-sort="lastEmailed">Last Emailed<span class="arrow"></span></th>
+          <th>Comment</th><th></th>
         </tr></thead>
         <tbody id="contacts-body"></tbody>
       </table>
@@ -653,6 +662,8 @@ let statusFilter = "all";
 let ownerFilter  = "all";
 let lastEmailFilter = "all";
 let searchTerm   = "";
+let sortKey      = null;
+let sortDir      = "asc";
 let activeCid    = null;
 let activeTpl    = null;
 let bulkTpl      = null;
@@ -747,6 +758,40 @@ async function loadActivity() {
   } catch(_) {}
 }
 
+function sortContacts(list) {
+  if(!sortKey) return list;
+  const dir = sortDir === "asc" ? 1 : -1;
+  return [...list].sort((a,b) => {
+    if(sortKey === "lastEmailed") {
+      const ta = a.lastEmailed ? new Date(a.lastEmailed).getTime() : null;
+      const tb = b.lastEmailed ? new Date(b.lastEmailed).getTime() : null;
+      if(ta === null && tb === null) return 0;
+      if(ta === null) return 1;
+      if(tb === null) return -1;
+      return (ta - tb) * dir;
+    }
+    const va = (a[sortKey] || "").toString().toLowerCase();
+    const vb = (b[sortKey] || "").toString().toLowerCase();
+    if(va === vb) return 0;
+    if(!va) return 1;
+    if(!vb) return -1;
+    return va < vb ? -dir : dir;
+  });
+}
+
+function updateSortIndicators() {
+  document.querySelectorAll("#contacts-thead th[data-sort]").forEach(th => {
+    const arrow = th.querySelector(".arrow");
+    if(th.dataset.sort === sortKey) {
+      th.classList.add("sorted");
+      arrow.textContent = sortDir === "asc" ? "↑" : "↓";
+    } else {
+      th.classList.remove("sorted");
+      arrow.textContent = "";
+    }
+  });
+}
+
 function populateOwnerFilter() {
   const sel = $("filter-owner"); if(!sel) return;
   const cur = sel.value || ownerFilter;
@@ -778,6 +823,8 @@ function render() {
     const t=searchTerm.toLowerCase();
     list=list.filter(c=>[c.name,c.email,c.phone,c.comment,c.owner,c.status].some(v=>(v||"").toLowerCase().includes(t)));
   }
+  list = sortContacts(list);
+  updateSortIndicators();
   const body=$("contacts-body"), empty=$("empty-state");
   if(!list.length){
     body.innerHTML=""; empty.style.display="block";
@@ -1066,6 +1113,14 @@ $("bulk-clear-btn").addEventListener("click",()=>{
 $("bulk-delete-btn").addEventListener("click",bulkDelete);
 $("bulk-email-btn").addEventListener("click",openBulkEmailModal);
 function markFilterStyle(sel){ sel.classList.toggle("has-value", sel.value !== "all"); }
+$("contacts-thead").addEventListener("click", e => {
+  const th = e.target.closest("th[data-sort]");
+  if(!th) return;
+  const key = th.dataset.sort;
+  if(sortKey === key) sortDir = sortDir === "asc" ? "desc" : "asc";
+  else { sortKey = key; sortDir = "asc"; }
+  render();
+});
 $("filter-status").addEventListener("change", e => { statusFilter=e.target.value; markFilterStyle(e.target); render(); });
 $("filter-owner").addEventListener("change",  e => { ownerFilter=e.target.value;  markFilterStyle(e.target); render(); });
 $("filter-last-email").addEventListener("change", e => { lastEmailFilter=e.target.value; markFilterStyle(e.target); render(); });
